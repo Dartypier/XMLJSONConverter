@@ -1,5 +1,4 @@
 import javax.xml.stream.*;
-import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
@@ -10,9 +9,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-//STAX documentation to manage XML parse:
-//https://docs.oracle.com/javase/tutorial/jaxp/stax/api.html
 
 public class XMLParserEx {
     public static void main(String[] args) throws IOException, XMLStreamException {
@@ -25,12 +21,81 @@ public class XMLParserEx {
         Thread runnerThread = new Thread(pthread);
         runnerThread.start();
 
+        //Do XMLTInternal conversion and get rootElement
+        ObjElement rootElement1 = XMLToInternal("po.xml");
+
+        //Read from JSON
+        ObjElement rootElement2 = JSONToInternal("out.json");
+
+        //DEBUG: check rootElement content
+        writeToFileRecursiveTraverse("out.txt1", rootElement1);
+
+        //STOP PrgressThread when all operations are completed
+        runnerThread.interrupt();
+    }
+
+    //This is a debug method that prints all the objects information (not XML nor JSON)
+    public static void writeToFileRecursiveTraverse(String outPath, ObjElement rootElement) throws IOException {
+        //TODO: should manage exceptions
+        FileWriter fw = new FileWriter(outPath);
+        recursiveTraverse(outPath, fw, rootElement);
+        fw.close();
+    }
+
+    public static void recursiveTraverse(String outPath, FileWriter fw, ObjElement rootElement) throws IOException {
+        //this is a recursive function
+        //the rootElement is the root for every node (recursive POV)
+
+        fw.write(rootElement.getName() +" "+rootElement.getValue()+"\n");
+        for(ObjNamespace ns: rootElement.getNamespaceList()){
+            fw.write(ns.getPrefix()+" "+ns.getURI()+"\n");
+        }
+        for(ObjAttribute attr: rootElement.getAttributesList()){
+            fw.write(attr.getName()+" "+attr.getValue()+"\n");
+        }
+        for(ObjElement obj: rootElement.getElementsList()){
+            recursiveTraverse(outPath, fw, obj);
+        }
+    }
+
+    public static void internalToJSON(String outPath, ObjElement rootElement, boolean enablePretty, boolean disableEmptyNull) throws IOException {
+        //TODO: disableEmptyNull should include custom serializer/deserializer to not include empty lists
+        Gson gson;
+        if(enablePretty && disableEmptyNull){
+            gson = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .serializeNulls()
+                    .create();
+        }
+        else if(enablePretty && !disableEmptyNull){
+            gson = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .create();
+        }
+        else if(!enablePretty && disableEmptyNull){
+            gson = new GsonBuilder()
+                    .serializeNulls()
+                    .create();
+        }
+        else {
+            gson = new GsonBuilder()
+                    .create();
+        }
+
+        //write to json
+        Writer fileWriter = new FileWriter(outPath);
+        gson.toJson(rootElement, fileWriter);
+        fileWriter.close();
+    }
+
+    public static ObjElement XMLToInternal(String inPath) throws FileNotFoundException, XMLStreamException {
+        //this method make the internal (java objects) representation on the XML file
         //create and arraylist of arraylist for memorizing recursively the objElement
         //at each step
         ArrayList<ArrayList<ObjElement>> recursiveObjBlocks = new ArrayList<>();
 
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-        XMLEventReader reader = xmlInputFactory.createXMLEventReader(new FileInputStream("po.xml"));
+        XMLEventReader reader = xmlInputFactory.createXMLEventReader(new FileInputStream(inPath));
 
         //mantains a reference to the root element, because its mantains
         //all other objects references
@@ -84,57 +149,15 @@ public class XMLParserEx {
             }
         }
 
-        logger.info("Completed");
-//        writeToFile("out.txt", rootElement);
+        return rootElement;
+    }
 
-        //Conversion from Internal to JSON
-        //TODO: add option to pretty on request (brings to big files)
-        //TODO: should personalize serializer/deserializer to remove empty lists
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-//                .serializeNulls()
-                .create();
-
-        //write to json
-        Writer fileWriter = new FileWriter("out.json");
-        gson.toJson(rootElement, fileWriter);
-        fileWriter.close();
-        //read from json to rootElement
+    public static ObjElement JSONToInternal(String inPath) throws IOException {
+        //read from JSON to rootElement
+        Gson gson = new GsonBuilder().create();
         Reader fileReader = new FileReader("out.json");
-        rootElement = gson.fromJson(fileReader, ObjElement.class);
+        ObjElement rootElement = gson.fromJson(fileReader, ObjElement.class);
         fileReader.close();
-
-        //DEBUG: check rootElement content
-        writeToFile("out.txt", rootElement);
-
-
-        //STOP PrgressThread when all
-        //operations are completed
-        runnerThread.interrupt();
-    }
-
-    //This is a debug method that prints all the objects information
-    //it is not a JSON format!
-    public static void writeToFile(String outPath, ObjElement rootElement) throws IOException {
-        //TODO: should manage exceptions
-        FileWriter fw = new FileWriter(outPath);
-        recursiveTraverse(outPath, fw, rootElement);
-        fw.close();
-    }
-
-    public static void recursiveTraverse(String outPath, FileWriter fw, ObjElement rootElement) throws IOException {
-        //this is a recursive function
-        //the rootElement is the root for every node (recursive POV)
-
-        fw.write(rootElement.getName() +" "+rootElement.getValue()+"\n");
-        for(ObjNamespace ns: rootElement.getNamespaceList()){
-            fw.write(ns.getPrefix()+" "+ns.getURI()+"\n");
-        }
-        for(ObjAttribute attr: rootElement.getAttributesList()){
-            fw.write(attr.getName()+" "+attr.getValue()+"\n");
-        }
-        for(ObjElement obj: rootElement.getElementsList()){
-            recursiveTraverse(outPath, fw, obj);
-        }
+        return rootElement;
     }
 }

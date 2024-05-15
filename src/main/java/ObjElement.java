@@ -1,7 +1,6 @@
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Namespace;
 import java.util.ArrayList;
