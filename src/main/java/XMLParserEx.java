@@ -22,13 +22,16 @@ public class XMLParserEx {
         runnerThread.start();
 
         //Do XMLTInternal conversion and get rootElement
-        ObjElement rootElement1 = XMLToInternal("po.xml");
+        ObjElement rootElement1 = XMLToInternal("treebank_e.xml");
+
+        //export json
+        internalToJSON("out.json", rootElement1, true, false);
 
         //Read from JSON
-        ObjElement rootElement2 = JSONToInternal("out.json");
+//        ObjElement rootElement2 = JSONToInternal("out.json");
 
         //DEBUG: check rootElement content
-        writeToFileRecursiveTraverse("out.txt1", rootElement1);
+        writeToFileRecursiveTraverse("out.txt", rootElement1);
 
         //STOP PrgressThread when all operations are completed
         runnerThread.interrupt();
@@ -60,25 +63,31 @@ public class XMLParserEx {
 
     public static void internalToJSON(String outPath, ObjElement rootElement, boolean enablePretty, boolean disableEmptyNull) throws IOException {
         //TODO: disableEmptyNull should include custom serializer/deserializer to not include empty lists
+        //All the times disableHtmlEscaping() is active, to prevent GSON converting special characters to
+        //unicde escapes
         Gson gson;
         if(enablePretty && disableEmptyNull){
             gson = new GsonBuilder()
                     .setPrettyPrinting()
                     .serializeNulls()
+                    .disableHtmlEscaping()
                     .create();
         }
         else if(enablePretty && !disableEmptyNull){
             gson = new GsonBuilder()
                     .setPrettyPrinting()
+                    .disableHtmlEscaping()
                     .create();
         }
         else if(!enablePretty && disableEmptyNull){
             gson = new GsonBuilder()
                     .serializeNulls()
+                    .disableHtmlEscaping()
                     .create();
         }
         else {
             gson = new GsonBuilder()
+                    .disableHtmlEscaping()
                     .create();
         }
 
