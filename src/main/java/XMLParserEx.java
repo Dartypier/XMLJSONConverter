@@ -55,11 +55,13 @@ public class XMLParserEx {
                 e.addNamespaces(startElement.getNamespaces());
 
                 //preparing ArrayList
+                //adding element's own arraylist
                 recursiveObjBlocks.add(new ArrayList<ObjElement>());
-                //adding new ObjElement to each arrayLIst
-                for (ArrayList<ObjElement> recursiveObjBlock : recursiveObjBlocks) {
-                    recursiveObjBlock.add(e);
-                }
+                //adding new ObjElement to its arrayLIst and the precedent
+                recursiveObjBlocks.get(recursiveObjBlocks.size()-1).add(e);
+                //check if -2 range exist (for root element it doesn't exist)
+                if(recursiveObjBlocks.size()>=2)
+                    recursiveObjBlocks.get(recursiveObjBlocks.size()-2).add(e);
             }
             if(nextEvent.isCharacters()){
                 String str = nextEvent.asCharacters().getData();
@@ -73,9 +75,9 @@ public class XMLParserEx {
             }
             if(nextEvent.isEndElement()){
                 EndElement endElement = nextEvent.asEndElement();
-                //its own block is the last array block
+                //its own block is the last array block. Now removing itself from the ArrayList
                 ObjElement e = recursiveObjBlocks.get(recursiveObjBlocks.size()-1).remove(0);
-                //add all last block to the element elementList
+                //add all last block elements to the element elementList
                 e.getElementsList().addAll(recursiveObjBlocks.get(recursiveObjBlocks.size()-1));
                 //removing the just cloned arrayList from blocks
                 recursiveObjBlocks.remove(recursiveObjBlocks.size()-1);
@@ -85,11 +87,12 @@ public class XMLParserEx {
         logger.info("Completed");
 //        writeToFile("out.txt", rootElement);
 
-        //TODO: Conversion from Internal to JSON
+        //Conversion from Internal to JSON
         //TODO: add option to pretty on request (brings to big files)
+        //TODO: should personalize serializer/deserializer to remove empty lists
         Gson gson = new GsonBuilder()
-//                .setPrettyPrinting()
-                .serializeNulls()
+                .setPrettyPrinting()
+//                .serializeNulls()
                 .create();
 
         //write to json
@@ -113,34 +116,25 @@ public class XMLParserEx {
     //This is a debug method that prints all the objects information
     //it is not a JSON format!
     public static void writeToFile(String outPath, ObjElement rootElement) throws IOException {
-
         //TODO: should manage exceptions
-        File file = new File(outPath);
-        FileWriter fw = new FileWriter(file);
+        FileWriter fw = new FileWriter(outPath);
+        recursiveTraverse(outPath, fw, rootElement);
+        fw.close();
+    }
 
-        //write out rootElement
-        fw.write(rootElement.getName()+" "+rootElement.getValue()+" ");
+    public static void recursiveTraverse(String outPath, FileWriter fw, ObjElement rootElement) throws IOException {
+        //this is a recursive function
+        //the rootElement is the root for every node (recursive POV)
+
+        fw.write(rootElement.getName() +" "+rootElement.getValue()+"\n");
         for(ObjNamespace ns: rootElement.getNamespaceList()){
             fw.write(ns.getPrefix()+" "+ns.getURI()+"\n");
         }
-        fw.write("\n");
         for(ObjAttribute attr: rootElement.getAttributesList()){
             fw.write(attr.getName()+" "+attr.getValue()+"\n");
         }
-        fw.write("\n");
-
-        //write out children
         for(ObjElement obj: rootElement.getElementsList()){
-            fw.write(obj.getName()+" "+obj.getValue()+" ");
-            for(ObjNamespace ns: obj.getNamespaceList()){
-                fw.write(ns.getPrefix()+" "+ns.getURI()+"\n");
-            }
-            fw.write("\n");
-            for(ObjAttribute attr: obj.getAttributesList()){
-                fw.write(attr.getName()+" "+attr.getValue()+"\n");
-            }
-            fw.write("\n");
+            recursiveTraverse(outPath, fw, obj);
         }
-        fw.close();
     }
 }
