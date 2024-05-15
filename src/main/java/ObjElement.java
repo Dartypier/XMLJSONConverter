@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ObjElement {
     //Logger
-    Logger logger = LoggerFactory.getLogger(ObjElement.class);
+//    Logger logger = LoggerFactory.getLogger(ObjElement.class);
 
     //element name
     private String name;
@@ -69,26 +69,6 @@ public class ObjElement {
             ons.setPrefix(ns.getPrefix());
             ons.setURI(ns.getNamespaceURI());
             namespacesList.add(ons);
-
-            logger.debug("NS {} {}", ns.getPrefix(), ns.getNamespaceURI());
         }
     }
-
-    //TODO: to remove
-//    public void addNamespaces(NamespaceContext namespaceContext){
-//        //same implementation as before, but for namespaces
-//        namespaceContext
-//        while(it.){
-//            Namespace ns = it.next();
-//            ObjNamespace ons = new ObjNamespace();
-//            //if the namespace is the default one
-//            //there is no prefix, so this field is null
-//            ons.setPrefix(ns.getPrefix());
-//            ons.setURI(ns.getNamespaceURI());
-//            namespacesList.add(ons);
-//        }
-//    }
-
-
-
 }

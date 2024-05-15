@@ -5,6 +5,9 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import java.io.*;
 import java.util.ArrayList;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,12 +20,17 @@ public class XMLParserEx {
         Logger logger = LoggerFactory.getLogger(XMLParserEx.class);
         logger.info("SW Version: {}", "1.0");
 
+        //ProgressThread
+        ProgressThread pthread = new ProgressThread();
+        Thread runnerThread = new Thread(pthread);
+        runnerThread.start();
+
         //create and arraylist of arraylist for memorizing recursively the objElement
         //at each step
         ArrayList<ArrayList<ObjElement>> recursiveObjBlocks = new ArrayList<>();
 
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-        XMLEventReader reader = xmlInputFactory.createXMLEventReader(new FileInputStream("family.xml"));
+        XMLEventReader reader = xmlInputFactory.createXMLEventReader(new FileInputStream("po.xml"));
 
         //mantains a reference to the root element, because its mantains
         //all other objects references
@@ -75,7 +83,31 @@ public class XMLParserEx {
         }
 
         logger.info("Completed");
+//        writeToFile("out.txt", rootElement);
+
+        //TODO: Conversion from Internal to JSON
+        //TODO: add option to pretty on request (brings to big files)
+        Gson gson = new GsonBuilder()
+//                .setPrettyPrinting()
+                .serializeNulls()
+                .create();
+
+        //write to json
+        Writer fileWriter = new FileWriter("out.json");
+        gson.toJson(rootElement, fileWriter);
+        fileWriter.close();
+        //read from json to rootElement
+        Reader fileReader = new FileReader("out.json");
+        rootElement = gson.fromJson(fileReader, ObjElement.class);
+        fileReader.close();
+
+        //DEBUG: check rootElement content
         writeToFile("out.txt", rootElement);
+
+
+        //STOP PrgressThread when all
+        //operations are completed
+        runnerThread.interrupt();
     }
 
     //This is a debug method that prints all the objects information
