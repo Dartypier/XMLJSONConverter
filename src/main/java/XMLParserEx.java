@@ -31,7 +31,7 @@ public class XMLParserEx {
 //        ObjElement rootElement2 = JSONToInternal("out.json");
 
         //DEBUG: check rootElement content
-//        writeToFileRecursiveTraverse("out.txt", rootElement1);
+        writeToFileRecursiveTraverse("out.txt", rootElement1);
 
         //export to XML
         internalToXML("out.xml", rootElement1);
@@ -185,9 +185,24 @@ public class XMLParserEx {
         //define the xml document
         writer.add(eventFactory.createStartDocument());
 
+        //set default namespace for the root element if defined
+        //NOTE: seems that declaring the namespace directly in the createStartElement method
+        //is sufficient to declare the default xmlns="..." namespace, thus not requiring
+        //setDefaultNamespace method
+//        String defaultUri = null;
+//        for(ObjNamespace ns: rootElement.getNamespaceList()){
+//            if(ns.getPrefix().isEmpty())
+//                defaultUri = ns.getURI();
+//            break;
+//            //this is the URI of the default namespace (xmlns="...")
+//            //indeed it has no prefix
+//        }
+//        if(defaultUri!=null){
+//            writer.setDefaultNamespace(defaultUri);
+//        }
 
+        //call recursive method from rootElement
         traverseXML(rootElement, writer, eventFactory);
-
 
         //write to file and close
         writer.close();
@@ -195,9 +210,19 @@ public class XMLParserEx {
 
     public static void traverseXML(ObjElement rootElement, XMLEventWriter writer, XMLEventFactory eventFactory) throws XMLStreamException {
         //recursive function
-        //createStartElement takes Itertor Namespace, Iterator attribute, "name"
-        //TODO xlmns default namespace gives problems (don't execute)
-        writer.add(eventFactory.createStartElement("" , "", rootElement.getName()));
+
+        //only for the rootelement assign defaultNamespace xmlns to prevet binding errors
+        String defaultUri = null;
+        for(ObjNamespace ns: rootElement.getNamespaceList()){
+            if(ns.getPrefix().isEmpty())
+                defaultUri = ns.getURI();
+            break;
+            //this is the URI of the default namespace (xmlns="...")
+            //indeed it has no prefix
+        }
+        //now only the rootElement, that has default namespace xlmns="..."
+        //will have defaultUri not null, so this prevents error binding default namespace
+        writer.add(eventFactory.createStartElement("" , defaultUri, rootElement.getName()));
         //add namespaces
         for(ObjNamespace ns : rootElement.getNamespaceList()){
             writer.add(eventFactory.createNamespace(ns.getPrefix(), ns.getURI()));
