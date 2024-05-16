@@ -13,10 +13,10 @@ import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class XMLParserEx {
+public class Main {
     public static void main(String[] args) throws IOException, XMLStreamException, TransformerException {
         //Logger
-        Logger logger = LoggerFactory.getLogger(XMLParserEx.class);
+        Logger logger = LoggerFactory.getLogger(Main.class);
         logger.info("SW Version: {}", "1.0");
 
         //ProgressThread
@@ -25,7 +25,7 @@ public class XMLParserEx {
         runnerThread.start();
 
         //Do XMLTInternal conversion and get rootElement
-        ObjElement rootElement1 = XMLToInternal("family.xml");
+        ObjElement rootElement1 = XMLToInternal("po.xml");
 
         //export json
         internalToJSON("out.json", rootElement1, true, false);
@@ -47,6 +47,7 @@ public class XMLParserEx {
     public static void writeToFileRecursiveTraverse(String outPath, ObjElement rootElement) throws IOException {
         //TODO: should manage exceptions
         FileWriter fw = new FileWriter(outPath);
+        fw.write("##This is a debug internal representation, not a valid XML not JSON format##\n");
         recursiveTraverse(fw, rootElement);
         fw.close();
     }
