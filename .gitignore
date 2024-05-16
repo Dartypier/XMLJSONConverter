@@ -40,3 +40,9 @@ build/
 
 ## OUT FILE ##
 out.*
+
+##DEMO DIR##
+demo
+
+##BFG Report DIR##
+..bfg-report
