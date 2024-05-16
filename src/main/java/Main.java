@@ -17,30 +17,53 @@ public class Main {
     public static void main(String[] args) throws IOException, XMLStreamException, TransformerException {
         //Logger
         Logger logger = LoggerFactory.getLogger(Main.class);
-        logger.info("SW Version: {}", "1.0");
+//        logger.info("SW Version: {}", "1.0");
+
+        //Manages input
+        if(args.length != 2) {
+            if(args[0].toLowerCase().equals("-h") || args[0].toLowerCase().equals("--help")) {
+                helpPrompt();
+                return;
+            }
+            throw new RuntimeException("Usage: <input-file> <output-file>");
+        }
+
+        String inputFile = args[0];
+        String outputFile = args[1];
+
+        if(inputFile.toLowerCase().contains("xml") || inputFile.toLowerCase().contains("railml")) {
+            convertXMLToJSON(inputFile, outputFile);
+        }
+        else if(inputFile.toLowerCase().contains("json")) {
+            convertJSONToXML(inputFile, outputFile);
+        }
+        else{
+            helpPrompt();
+            throw new RuntimeException("Unsupported input format");
+        }
 
         //ProgressThread
-        ProgressThread pthread = new ProgressThread();
-        Thread runnerThread = new Thread(pthread);
-        runnerThread.start();
+//        ProgressThread pthread = new ProgressThread();
+//        Thread runnerThread = new Thread(pthread);
+//        runnerThread.start();
 
         //Do XMLTInternal conversion and get rootElement
-        ObjElement rootElement1 = XMLToInternal("po.xml");
+//        ObjElement rootElement1 = XMLToInternal("po.xml");
 
         //export json
-        internalToJSON("out.json", rootElement1, true, false);
+//        internalToJSON("out.json", rootElement1, true, false);
 
         //Read from JSON
-        ObjElement rootElement2 = JSONToInternal("out.json");
+//        ObjElement rootElement2 = JSONToInternal("out.json");
 
         //DEBUG: check rootElement content
-        writeToFileRecursiveTraverse("out.txt", rootElement1);
+//        writeToFileRecursiveTraverse("out.txt", rootElement1);
 
         //export to XML
-        internalToXML("out.xml", rootElement2);
+//        internalToXML("out.xml", rootElement2);
 
         //STOP PrgressThread when all operations are completed
-        runnerThread.interrupt();
+//        runnerThread.interrupt();
     }
 
     //This is a debug method that prints all the objects information (not XML nor JSON)
@@ -262,5 +285,37 @@ public class Main {
         //closing
         writer.add(eventFactory.createEndElement("", "", rootElement.getName()));
 
+    }
+
+    public static void convertXMLToJSON(String inputFile, String outputFile) throws XMLStreamException, IOException {
+        //ProgressThread
+        ProgressThread pthread = new ProgressThread();
+        Thread runnerThread = new Thread(pthread);
+        //if main crashes, the JVM closes all daemons threads
+        runnerThread.setDaemon(true);
+        runnerThread.start();
+
+        ObjElement rootElement1 = XMLToInternal(inputFile);
+        internalToJSON(outputFile, rootElement1, true, false);
+        runnerThread.interrupt();
+    }
+
+    public static void convertJSONToXML(String inputFile, String outputtFile) throws IOException, XMLStreamException, TransformerException {
+        //ProgressThread
+        ProgressThread pthread = new ProgressThread();
+        Thread runnerThread = new Thread(pthread);
+        //if main crashes, the JVM closes all daemons threads
+        runnerThread.setDaemon(true);
+        runnerThread.start();
+
+        ObjElement rootElement = JSONToInternal(inputFile);
+        internalToXML(outputtFile, rootElement);
+        runnerThread.interrupt();
+    }
+
+    public static void helpPrompt(){
+        System.out.println("XML/JSON Converter by Jacopo Zecchi (Dartypier)");
+        System.out.println("Usage: <input-file>.{xml|railml|json} <output-file>.*");
+        System.out.println("Specify an input xml (railml) or JSON file. The output will be the respective JSON/XML format");
     }
 }

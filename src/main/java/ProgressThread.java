@@ -9,7 +9,7 @@ public class ProgressThread extends Thread{
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
-                System.out.println("\nCompleted.");
+                System.out.println("\nConversion completed");
                 break; // Exit the loop on interrupt
             }
         }
