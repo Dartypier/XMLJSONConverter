@@ -22,16 +22,19 @@ public class XMLParserEx {
         runnerThread.start();
 
         //Do XMLTInternal conversion and get rootElement
-        ObjElement rootElement1 = XMLToInternal("treebank_e.xml");
+        ObjElement rootElement1 = XMLToInternal("menu.xml");
 
         //export json
-        internalToJSON("out.json", rootElement1, true, false);
+//        internalToJSON("out.json", rootElement1, true, false);
 
         //Read from JSON
 //        ObjElement rootElement2 = JSONToInternal("out.json");
 
         //DEBUG: check rootElement content
-        writeToFileRecursiveTraverse("out.txt", rootElement1);
+//        writeToFileRecursiveTraverse("out.txt", rootElement1);
+
+        //export to XML
+        internalToXML("out.xml", rootElement1);
 
         //STOP PrgressThread when all operations are completed
         runnerThread.interrupt();
@@ -41,11 +44,11 @@ public class XMLParserEx {
     public static void writeToFileRecursiveTraverse(String outPath, ObjElement rootElement) throws IOException {
         //TODO: should manage exceptions
         FileWriter fw = new FileWriter(outPath);
-        recursiveTraverse(outPath, fw, rootElement);
+        recursiveTraverse(fw, rootElement);
         fw.close();
     }
 
-    public static void recursiveTraverse(String outPath, FileWriter fw, ObjElement rootElement) throws IOException {
+    public static void recursiveTraverse(FileWriter fw, ObjElement rootElement) throws IOException {
         //this is a recursive function
         //the rootElement is the root for every node (recursive POV)
 
@@ -57,7 +60,7 @@ public class XMLParserEx {
             fw.write(attr.getName()+" "+attr.getValue()+"\n");
         }
         for(ObjElement obj: rootElement.getElementsList()){
-            recursiveTraverse(outPath, fw, obj);
+            recursiveTraverse(fw, obj);
         }
     }
 
@@ -168,5 +171,53 @@ public class XMLParserEx {
         ObjElement rootElement = gson.fromJson(fileReader, ObjElement.class);
         fileReader.close();
         return rootElement;
+    }
+
+    public static void internalToXML(String outPath, ObjElement rootElement) throws IOException, XMLStreamException {
+        //this method convert internal representation of objects to XML file
+        //GUIDE https://mkyong.com/java/how-to-write-xml-file-in-java-stax-writer/
+        XMLOutputFactory output = XMLOutputFactory.newInstance();
+        XMLEventFactory eventFactory = XMLEventFactory.newInstance();
+
+        Writer fw = new FileWriter(outPath);
+        XMLEventWriter writer = output.createXMLEventWriter(fw);
+
+        //define the xml document
+        writer.add(eventFactory.createStartDocument());
+
+
+        traverseXML(rootElement, writer, eventFactory);
+
+
+        //write to file and close
+        writer.close();
+    }
+
+    public static void traverseXML(ObjElement rootElement, XMLEventWriter writer, XMLEventFactory eventFactory) throws XMLStreamException {
+        //recursive function
+        //createStartElement takes Itertor Namespace, Iterator attribute, "name"
+        //TODO xlmns default namespace gives problems (don't execute)
+        writer.add(eventFactory.createStartElement("" , "", rootElement.getName()));
+        //add namespaces
+        for(ObjNamespace ns : rootElement.getNamespaceList()){
+            writer.add(eventFactory.createNamespace(ns.getPrefix(), ns.getURI()));
+        }
+        //add attributes
+        for(ObjAttribute at : rootElement.getAttributesList()){
+            writer.add(eventFactory.createAttribute(at.getName(), at.getValue()));
+        }
+        //add (nested) elements
+        for(ObjElement obj: rootElement.getElementsList()){
+            traverseXML(obj, writer, eventFactory);
+        }
+
+        //add value (base case of recursion)
+        if(rootElement.getValue()!=null){
+            writer.add(eventFactory.createCharacters(rootElement.getValue()));
+        }
+
+        //closing
+        writer.add(eventFactory.createEndElement("", "", rootElement.getName()));
+
     }
 }
