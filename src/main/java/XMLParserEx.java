@@ -2,6 +2,9 @@ import javax.xml.stream.*;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+import javax.xml.transform.*;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -11,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class XMLParserEx {
-    public static void main(String[] args) throws IOException, XMLStreamException {
+    public static void main(String[] args) throws IOException, XMLStreamException, TransformerException {
         //Logger
         Logger logger = LoggerFactory.getLogger(XMLParserEx.class);
         logger.info("SW Version: {}", "1.0");
@@ -22,19 +25,19 @@ public class XMLParserEx {
         runnerThread.start();
 
         //Do XMLTInternal conversion and get rootElement
-        ObjElement rootElement1 = XMLToInternal("menu.xml");
+        ObjElement rootElement1 = XMLToInternal("family.xml");
 
         //export json
-//        internalToJSON("out.json", rootElement1, true, false);
+        internalToJSON("out.json", rootElement1, true, false);
 
         //Read from JSON
-//        ObjElement rootElement2 = JSONToInternal("out.json");
+        ObjElement rootElement2 = JSONToInternal("out.json");
 
         //DEBUG: check rootElement content
         writeToFileRecursiveTraverse("out.txt", rootElement1);
 
         //export to XML
-        internalToXML("out.xml", rootElement1);
+        internalToXML("out.xml", rootElement2);
 
         //STOP PrgressThread when all operations are completed
         runnerThread.interrupt();
@@ -173,14 +176,13 @@ public class XMLParserEx {
         return rootElement;
     }
 
-    public static void internalToXML(String outPath, ObjElement rootElement) throws IOException, XMLStreamException {
+    public static void internalToXML(String outPath, ObjElement rootElement) throws IOException, XMLStreamException, TransformerException {
         //this method convert internal representation of objects to XML file
-        //GUIDE https://mkyong.com/java/how-to-write-xml-file-in-java-stax-writer/
         XMLOutputFactory output = XMLOutputFactory.newInstance();
         XMLEventFactory eventFactory = XMLEventFactory.newInstance();
 
-        Writer fw = new FileWriter(outPath);
-        XMLEventWriter writer = output.createXMLEventWriter(fw);
+        Writer sw = new StringWriter();
+        XMLEventWriter writer = output.createXMLEventWriter(sw);
 
         //define the xml document
         writer.add(eventFactory.createStartDocument());
@@ -204,8 +206,23 @@ public class XMLParserEx {
         //call recursive method from rootElement
         traverseXML(rootElement, writer, eventFactory);
 
-        //write to file and close
+        //write to string and close
+        writer.flush();
         writer.close();
+
+        //prettify XML (does indentations)
+        Transformer t = TransformerFactory.newInstance().newTransformer();
+        //add indentations
+        t.setOutputProperty(OutputKeys.INDENT, "yes");
+        //add line break before the root element
+        t.setOutputProperty(OutputKeys.STANDALONE, "yes");
+        Writer fw = new FileWriter(outPath);
+        StreamSource ss = new StreamSource(new StringReader(sw.toString()));
+        StreamResult sr = new StreamResult(fw);
+        t.transform(ss, sr);
+        //write to file and close
+        fw.flush();
+        fw.close();
     }
 
     public static void traverseXML(ObjElement rootElement, XMLEventWriter writer, XMLEventFactory eventFactory) throws XMLStreamException {
