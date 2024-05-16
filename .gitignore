@@ -50,7 +50,3 @@ demo
 ##Artifacts folder##
 out
 src/main/resources/META-INF
-
-##ignore readme and related data##
-Readme.md
-demo.gif
