@@ -1,6 +1,3 @@
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Namespace;
 import java.util.ArrayList;
@@ -8,8 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 
 public class ObjElement {
-    //Logger
-//    Logger logger = LoggerFactory.getLogger(ObjElement.class);
 
     //element name
     private String name;
