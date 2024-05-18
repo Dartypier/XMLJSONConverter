@@ -1,8 +1,9 @@
+package it.unifi.main;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import javax.xml.stream.*;
-import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.OutputKeys;
@@ -13,6 +14,8 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.util.ArrayList;
+
+import it.unifi.adapters.*;
 
 public class Conversions {
     //manages static methods for conversions
@@ -43,31 +46,55 @@ public class Conversions {
     }
 
     public static void internalToJSON(String outPath, ObjElement rootElement, boolean enablePretty, boolean disableEmptyNull) throws IOException {
-        //TODO: disableEmptyNull should include custom serializer/deserializer to not include empty lists
+        //TODO: disableEmptyNull should include custom serializer/deserializer to not include empty lists (use factory method)
         //All the times disableHtmlEscaping() is active, to prevent GSON converting special characters to
         //unicde escapes
         Gson gson;
         if(enablePretty && disableEmptyNull){
+            Gson gsonInner = new GsonBuilder()
+                    .registerTypeAdapter(ObjNamespace.class, new ObjNamespaceAdapter())
+                    .registerTypeAdapter(ObjAttribute.class, new ObjAttributeAdapter())
+                    .create();
+
             gson = new GsonBuilder()
+                    .registerTypeAdapter(ObjElement.class, new ObjElementAdapter(gsonInner))
+                    .setPrettyPrinting()
+                    .disableHtmlEscaping()
+                    .create();
+        }
+        else if(enablePretty && !disableEmptyNull){
+            Gson gsonInner = new GsonBuilder()
+                    .registerTypeAdapter(ObjNamespace.class, new ObjNamespaceAdapter())
+                    .registerTypeAdapter(ObjAttribute.class, new ObjAttributeAdapter())
+                    .create();
+
+            gson = new GsonBuilder()
+                    .registerTypeAdapter(ObjElement.class, new ObjElementAdapter(gsonInner))
                     .setPrettyPrinting()
                     .serializeNulls()
                     .disableHtmlEscaping()
                     .create();
         }
-        else if(enablePretty && !disableEmptyNull){
-            gson = new GsonBuilder()
-                    .setPrettyPrinting()
-                    .disableHtmlEscaping()
-                    .create();
-        }
         else if(!enablePretty && disableEmptyNull){
+            Gson gsonInner = new GsonBuilder()
+                    .registerTypeAdapter(ObjNamespace.class, new ObjNamespaceAdapter())
+                    .registerTypeAdapter(ObjAttribute.class, new ObjAttributeAdapter())
+                    .create();
+
             gson = new GsonBuilder()
+                    .registerTypeAdapter(ObjElement.class, new ObjElementAdapter(gsonInner))
                     .serializeNulls()
                     .disableHtmlEscaping()
                     .create();
         }
         else {
+            Gson gsonInner = new GsonBuilder()
+                    .registerTypeAdapter(ObjNamespace.class, new ObjNamespaceAdapter())
+                    .registerTypeAdapter(ObjAttribute.class, new ObjAttributeAdapter())
+                    .create();
+
             gson = new GsonBuilder()
+                    .registerTypeAdapter(ObjElement.class, new ObjElementAdapter(gsonInner))
                     .disableHtmlEscaping()
                     .create();
         }
@@ -112,7 +139,7 @@ public class Conversions {
                 //preparing ArrayList
                 //adding element's own arraylist
                 recursiveObjBlocks.add(new ArrayList<>());
-                //adding new ObjElement to its arrayLIst and the precedent
+                //adding new it.unifi.main.ObjElement to its arrayLIst and the precedent
                 recursiveObjBlocks.get(recursiveObjBlocks.size()-1).add(e);
                 //check if -2 range exist (for root element it doesn't exist)
                 if(recursiveObjBlocks.size()>=2)
@@ -144,7 +171,16 @@ public class Conversions {
 
     public static ObjElement JSONToInternal(String inPath) throws IOException {
         //read from JSON to rootElement
-        Gson gson = new GsonBuilder().create();
+        Gson gsonInner = new GsonBuilder()
+                .registerTypeAdapter(ObjNamespace.class, new ObjNamespaceAdapter())
+                .registerTypeAdapter(ObjAttribute.class, new ObjAttributeAdapter())
+                .create();
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(ObjElement.class, new ObjElementAdapter(gsonInner))
+                .serializeNulls()
+                .create();
+
         Reader fileReader = new FileReader(inPath);
         ObjElement rootElement = gson.fromJson(fileReader, ObjElement.class);
         fileReader.close();
@@ -167,7 +203,7 @@ public class Conversions {
         //is sufficient to declare the default xmlns="..." namespace, thus not requiring
         //setDefaultNamespace method
 //        String defaultUri = null;
-//        for(ObjNamespace ns: rootElement.getNamespaceList()){
+//        for(it.unifi.main.ObjNamespace ns: rootElement.getNamespaceList()){
 //            if(ns.getPrefix().isEmpty())
 //                defaultUri = ns.getURI();
 //            break;
@@ -239,7 +275,7 @@ public class Conversions {
     }
 
     public static void convertXMLToJSON(String inputFile, String outputFile) throws XMLStreamException, IOException {
-        //ProgressThread
+        //it.unifi.main.ProgressThread
         ProgressThread pthread = new ProgressThread();
         Thread runnerThread = new Thread(pthread);
         //if main crashes, the JVM closes all daemons threads
@@ -252,7 +288,7 @@ public class Conversions {
     }
 
     public static void convertJSONToXML(String inputFile, String outputtFile) throws IOException, XMLStreamException, TransformerException {
-        //ProgressThread
+        //it.unifi.main.ProgressThread
         ProgressThread pthread = new ProgressThread();
         Thread runnerThread = new Thread(pthread);
         //if main crashes, the JVM closes all daemons threads

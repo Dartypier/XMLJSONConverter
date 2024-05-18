@@ -1,3 +1,5 @@
+package it.unifi.main;
+
 //This class provide a progress counter when waiting the format conversion
 //that can require some time with big files
 public class ProgressThread extends Thread{

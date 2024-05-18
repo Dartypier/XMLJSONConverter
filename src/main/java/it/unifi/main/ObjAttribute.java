@@ -1,3 +1,5 @@
+package it.unifi.main;
+
 //defines an Element attribute
 public class ObjAttribute{
     private String name;

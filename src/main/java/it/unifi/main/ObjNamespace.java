@@ -1,3 +1,5 @@
+package it.unifi.main;
+
 //This class defines the namespaces defined in a XML element
 //the default namespace (ie: 'xlmns:{URI}') has not 'prefix'
 public class ObjNamespace {

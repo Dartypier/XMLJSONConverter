@@ -1,3 +1,5 @@
+package it.unifi.main;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,19 +14,19 @@ public class Main {
 //        logger.info("SW Version: {}", "1.0");
 
         //EXECUTION EXAMPLES
-        //ProgressThread
-//        ProgressThread pthread = new ProgressThread();
+        //it.unifi.main.ProgressThread
+//        it.unifi.main.ProgressThread pthread = new it.unifi.main.ProgressThread();
 //        Thread runnerThread = new Thread(pthread);
 //        runnerThread.start();
 
         //Do XMLTInternal conversion and get rootElement
-//        ObjElement rootElement1 = XMLToInternal("po.xml");
+//        it.unifi.main.ObjElement rootElement1 = XMLToInternal("po.xml");
 
         //export json
 //        internalToJSON("out.json", rootElement1, true, false);
 
         //Read from JSON
-//        ObjElement rootElement2 = JSONToInternal("out.json");
+//        it.unifi.main.ObjElement rootElement2 = JSONToInternal("out.json");
 
         //DEBUG: check rootElement content
 //        writeToFileRecursiveTraverse("out.txt", rootElement1);

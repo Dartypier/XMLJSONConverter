@@ -1,3 +1,5 @@
+package it.unifi.main;
+
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Namespace;
 import java.util.ArrayList;
@@ -18,11 +20,19 @@ public class ObjElement {
     private List<ObjElement> elementsList;
 
     public ObjElement(){
+        //all fields initialized by default
         this.name=null;
         this.value=null;
         this.attributesList=new ArrayList<>();
         this.elementsList=new ArrayList<>();
         this.namespacesList=new ArrayList<>();
+    }
+    public ObjElement(String name, String value, List namespacesList, List attributesList, List elementsList){
+        this.name=name;
+        this.value=value;
+        this.namespacesList=namespacesList;
+        this.attributesList=attributesList;
+        this.elementsList=elementsList;
     }
 
     public String getName() {return name;}
@@ -39,7 +49,7 @@ public class ObjElement {
         while(it.hasNext()){
             //next xml attribute
             Attribute at = it.next();
-            //create ObjAttribute and set name, value
+            //create it.unifi.main.ObjAttribute and set name, value
             ObjAttribute oat = new ObjAttribute();
             //check if it has prefix or not
             if(at.getName().getPrefix().isEmpty())
@@ -48,11 +58,10 @@ public class ObjElement {
                 oat.setName(at.getName().getPrefix()+":"+at.getName().getLocalPart());
 
             oat.setValue(at.getValue());
-            //add ObjAttribute to attributesList
+            //add it.unifi.main.ObjAttribute to attributesList
             attributesList.add(oat);
         }
     }
-
     public void addNamespaces(Iterator<Namespace> it){
         //same implementation as before, but for namespaces
         while(it.hasNext()){
