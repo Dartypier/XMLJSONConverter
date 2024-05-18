@@ -45,12 +45,11 @@ public class Conversions {
         }
     }
 
-    public static void internalToJSON(String outPath, ObjElement rootElement, boolean enablePretty, boolean disableEmptyNull) throws IOException {
-        //TODO: disableEmptyNull should include custom serializer/deserializer to not include empty lists (use factory method)
+    public static void internalToJSON(String outPath, ObjElement rootElement, boolean enablePretty) throws IOException {
         //All the times disableHtmlEscaping() is active, to prevent GSON converting special characters to
         //unicde escapes
         Gson gson;
-        if(enablePretty && disableEmptyNull){
+        if(enablePretty){
             Gson gsonInner = new GsonBuilder()
                     .registerTypeAdapter(ObjNamespace.class, new ObjNamespaceAdapter())
                     .registerTypeAdapter(ObjAttribute.class, new ObjAttributeAdapter())
@@ -59,30 +58,6 @@ public class Conversions {
             gson = new GsonBuilder()
                     .registerTypeAdapter(ObjElement.class, new ObjElementAdapter(gsonInner))
                     .setPrettyPrinting()
-                    .disableHtmlEscaping()
-                    .create();
-        }
-        else if(enablePretty && !disableEmptyNull){
-            Gson gsonInner = new GsonBuilder()
-                    .registerTypeAdapter(ObjNamespace.class, new ObjNamespaceAdapter())
-                    .registerTypeAdapter(ObjAttribute.class, new ObjAttributeAdapter())
-                    .create();
-
-            gson = new GsonBuilder()
-                    .registerTypeAdapter(ObjElement.class, new ObjElementAdapter(gsonInner))
-                    .setPrettyPrinting()
-                    .serializeNulls()
-                    .disableHtmlEscaping()
-                    .create();
-        }
-        else if(!enablePretty && disableEmptyNull){
-            Gson gsonInner = new GsonBuilder()
-                    .registerTypeAdapter(ObjNamespace.class, new ObjNamespaceAdapter())
-                    .registerTypeAdapter(ObjAttribute.class, new ObjAttributeAdapter())
-                    .create();
-
-            gson = new GsonBuilder()
-                    .registerTypeAdapter(ObjElement.class, new ObjElementAdapter(gsonInner))
                     .serializeNulls()
                     .disableHtmlEscaping()
                     .create();
@@ -95,6 +70,7 @@ public class Conversions {
 
             gson = new GsonBuilder()
                     .registerTypeAdapter(ObjElement.class, new ObjElementAdapter(gsonInner))
+                    .serializeNulls()
                     .disableHtmlEscaping()
                     .create();
         }
@@ -283,7 +259,7 @@ public class Conversions {
         runnerThread.start();
 
         ObjElement rootElement1 = XMLToInternal(inputFile);
-        internalToJSON(outputFile, rootElement1, true, false);
+        internalToJSON(outputFile, rootElement1, true);
         runnerThread.interrupt();
     }
 

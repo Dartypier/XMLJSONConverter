@@ -10,7 +10,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws XMLStreamException, IOException, TransformerException {
         //Logger
-        Logger logger = LoggerFactory.getLogger(Main.class);
+//        Logger logger = LoggerFactory.getLogger(Main.class);
 //        logger.info("SW Version: {}", "1.0");
 
         //EXECUTION EXAMPLES
