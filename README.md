@@ -49,5 +49,5 @@ You can see that the JSON document is divided recursively in 4 sections:
   - JSON (due to XML conversion) cannot have more than one plain `"property":value` field per object. But it can contain other elements as a list with other single field `"property":value`
 - every json value is treated and forced to be a String, that because XML treats every value as a text-element and the tool is not informed about the XML schema. 
   - So when converting from XML to JSON, every JSON value will be converted as a String
-  - JSON values in input are not required to be String
+  - JSON values in input are not required to be String in Json `element_name` value (non String value for value in `namespaces` and `attributes` are not valid)
 
