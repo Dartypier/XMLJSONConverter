@@ -1,8 +1,8 @@
-package it.unifi.main;
+package it.unifi.cli;
 
 //This class provide a progress counter when waiting the format conversion
 //that can require some time with big files
-public class ProgressThread extends Thread{
+class ProgressThread extends Thread{
 
     public void run() {
         System.out.print("Converting");

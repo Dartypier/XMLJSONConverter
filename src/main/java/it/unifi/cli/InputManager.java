@@ -1,11 +1,11 @@
-package it.unifi.main;
+package it.unifi.cli;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
-//manages user input from CLI and calls relatives Conversion methods
-public class InputManager {
+//manages user input from CLI and calls relatives ConversionWrite methods
+class InputManager {
     private String inputFile;
     private String outputFile;
 
@@ -35,24 +35,10 @@ public class InputManager {
     //does conversion call based on user input writing to an output file
     public void conversionCallWrite() throws XMLStreamException, IOException, TransformerException {
         if(inputFile.toLowerCase().contains("xml") || inputFile.toLowerCase().contains("railml")) {
-            Conversions.convertXMLToJSON(inputFile, outputFile);
+            ConversionWrite.writeXMLToJSON(inputFile, outputFile);
         }
         else if(inputFile.toLowerCase().contains("json")) {
-            Conversions.convertJSONToXML(inputFile, outputFile);
-        }
-        else{
-            helpPrompt();
-            throw new RuntimeException("Unsupported input format");
-        }
-    }
-
-    //does the conversion call based on user input, returning the objects tree structure (API use)
-    public ObjElement conversionCallObj() throws XMLStreamException, IOException {
-        if(inputFile.toLowerCase().contains("xml") || inputFile.toLowerCase().contains("railml")) {
-            return Conversions.XMLToInternal(inputFile);
-        }
-        else if(inputFile.toLowerCase().contains("json")) {
-            return Conversions.JSONToInternal(inputFile);
+            ConversionWrite.writeJSONToXML(inputFile, outputFile);
         }
         else{
             helpPrompt();

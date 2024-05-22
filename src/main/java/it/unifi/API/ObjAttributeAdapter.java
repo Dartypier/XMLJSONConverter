@@ -1,15 +1,13 @@
-package it.unifi.adapters;
+package it.unifi.API;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import it.unifi.main.ObjAttribute;
 
 import java.io.IOException;
-import java.io.StringWriter;
 
-public class ObjAttributeAdapter extends TypeAdapter<ObjAttribute> {
+class ObjAttributeAdapter extends TypeAdapter<ObjAttribute> {
     @Override
     public void write(JsonWriter writer, ObjAttribute objAttribute) throws IOException {
         writer.beginObject();

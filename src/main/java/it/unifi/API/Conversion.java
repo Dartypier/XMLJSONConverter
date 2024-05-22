@@ -1,4 +1,4 @@
-package it.unifi.main;
+package it.unifi.API;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -15,36 +15,12 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.util.ArrayList;
 
-import it.unifi.adapters.*;
+//This API class has static methods used to
+//get internal object representation from input XML/JSON file
+//get XML/JSON out representation from internal representation
+public class Conversion {
 
-public class Conversions {
-    //manages static methods for conversions
-
-    public static void writeToFileRecursiveTraverse(String outPath, ObjElement rootElement) throws IOException {
-        //This is a debug method that prints all the objects information (not XML nor JSON)
-        //TODO: should manage exceptions
-        FileWriter fw = new FileWriter(outPath);
-        fw.write("##This is a debug internal representation, not a valid XML not JSON format##\n");
-        recursiveTraverse(fw, rootElement);
-        fw.close();
-    }
-
-    public static void recursiveTraverse(FileWriter fw, ObjElement rootElement) throws IOException {
-        //this is a recursive function
-        //the rootElement is the root for every node (recursive POV)
-
-        fw.write(rootElement.getName() +" "+rootElement.getValue()+"\n");
-        for(ObjNamespace ns: rootElement.getNamespaceList()){
-            fw.write(ns.getPrefix()+" "+ns.getURI()+"\n");
-        }
-        for(ObjAttribute attr: rootElement.getAttributesList()){
-            fw.write(attr.getName()+" "+attr.getValue()+"\n");
-        }
-        for(ObjElement obj: rootElement.getElementsList()){
-            recursiveTraverse(fw, obj);
-        }
-    }
-
+    //conversion methods
     public static void internalToJSON(String outPath, ObjElement rootElement, boolean enablePretty) throws IOException {
         //All the times disableHtmlEscaping() is active, to prevent GSON converting special characters to
         //unicde escapes
@@ -122,7 +98,7 @@ public class Conversions {
                     recursiveObjBlocks.get(recursiveObjBlocks.size()-2).add(e);
             }
             if(nextEvent.isCharacters()){
-                String str = nextEvent.asCharacters().getData();
+                String str = nextEvent.asCharacters().getData().trim();
                 //if the value is WhiteSpace, it is ignored
                 if(!(nextEvent.asCharacters().isIgnorableWhiteSpace() || nextEvent.asCharacters().isWhiteSpace())){
                     //add string value to the current object
@@ -163,7 +139,7 @@ public class Conversions {
         return rootElement;
     }
 
-    public static void internalToXML(String outPath, ObjElement rootElement) throws IOException, XMLStreamException, TransformerException {
+    public static void internalToXML(String outPath, ObjElement rootElement, boolean prettify) throws IOException, XMLStreamException, TransformerException {
         //this method convert internal representation of objects to XML file
         XMLOutputFactory output = XMLOutputFactory.newInstance();
         XMLEventFactory eventFactory = XMLEventFactory.newInstance();
@@ -197,22 +173,32 @@ public class Conversions {
         writer.flush();
         writer.close();
 
-        //prettify XML (does indentations)
-        Transformer t = TransformerFactory.newInstance().newTransformer();
-        //add indentations
-        t.setOutputProperty(OutputKeys.INDENT, "yes");
-        //add line break before the root element
-        t.setOutputProperty(OutputKeys.STANDALONE, "yes");
-        Writer fw = new FileWriter(outPath);
-        StreamSource ss = new StreamSource(new StringReader(sw.toString()));
-        StreamResult sr = new StreamResult(fw);
-        t.transform(ss, sr);
-        //write to file and close
-        fw.flush();
-        fw.close();
+        if(prettify){
+            //prettify XML (does indentations)
+            Transformer t = TransformerFactory.newInstance().newTransformer();
+            //add indentations
+            t.setOutputProperty(OutputKeys.INDENT, "yes");
+            //add line break before the root element
+            t.setOutputProperty(OutputKeys.STANDALONE, "yes");
+            Writer fw = new FileWriter(outPath);
+            StreamSource ss = new StreamSource(new StringReader(sw.toString()));
+            StreamResult sr = new StreamResult(fw);
+            t.transform(ss, sr);
+            //write to file and close
+            fw.flush();
+            fw.close();
+        }
+        else {
+            Writer fw = new FileWriter(outPath);
+            fw.write(sw.toString());
+            //write to file and close
+            fw.flush();
+            fw.close();
+        }
     }
 
-    public static void traverseXML(ObjElement rootElement, XMLEventWriter writer, XMLEventFactory eventFactory) throws XMLStreamException {
+    //helper for internalToXML
+    private static void traverseXML(ObjElement rootElement, XMLEventWriter writer, XMLEventFactory eventFactory) throws XMLStreamException {
         //recursive function
 
         //only for the rootelement assign defaultNamespace xmlns to prevet binding errors
@@ -248,31 +234,5 @@ public class Conversions {
         //closing
         writer.add(eventFactory.createEndElement("", "", rootElement.getName()));
 
-    }
-
-    public static void convertXMLToJSON(String inputFile, String outputFile) throws XMLStreamException, IOException {
-        //it.unifi.main.ProgressThread
-        ProgressThread pthread = new ProgressThread();
-        Thread runnerThread = new Thread(pthread);
-        //if main crashes, the JVM closes all daemons threads
-        runnerThread.setDaemon(true);
-        runnerThread.start();
-
-        ObjElement rootElement1 = XMLToInternal(inputFile);
-        internalToJSON(outputFile, rootElement1, true);
-        runnerThread.interrupt();
-    }
-
-    public static void convertJSONToXML(String inputFile, String outputtFile) throws IOException, XMLStreamException, TransformerException {
-        //it.unifi.main.ProgressThread
-        ProgressThread pthread = new ProgressThread();
-        Thread runnerThread = new Thread(pthread);
-        //if main crashes, the JVM closes all daemons threads
-        runnerThread.setDaemon(true);
-        runnerThread.start();
-
-        ObjElement rootElement = JSONToInternal(inputFile);
-        internalToXML(outputtFile, rootElement);
-        runnerThread.interrupt();
     }
 }

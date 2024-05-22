@@ -1,4 +1,4 @@
-package it.unifi.main;
+package it.unifi.API;
 
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Namespace;

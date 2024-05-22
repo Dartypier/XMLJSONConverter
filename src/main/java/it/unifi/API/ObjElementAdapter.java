@@ -1,4 +1,4 @@
-package it.unifi.adapters;
+package it.unifi.API;
 
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
@@ -11,11 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unifi.main.ObjAttribute;
-import it.unifi.main.ObjElement;
-import it.unifi.main.ObjNamespace;
-
-public class ObjElementAdapter extends TypeAdapter<ObjElement> {
+class ObjElementAdapter extends TypeAdapter<ObjElement> {
 
     private final Gson gson;
     private final TypeAdapter<ObjNamespace> namespaceAdapter;

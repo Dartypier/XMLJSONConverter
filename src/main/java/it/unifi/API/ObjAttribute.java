@@ -1,4 +1,4 @@
-package it.unifi.main;
+package it.unifi.API;
 
 //defines an Element attribute
 public class ObjAttribute{

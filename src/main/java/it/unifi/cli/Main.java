@@ -1,13 +1,10 @@
-package it.unifi.main;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package it.unifi.cli;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
-public class Main {
+class Main {
     public static void main(String[] args) throws XMLStreamException, IOException, TransformerException {
         //MAIN function for JAR execuion
 

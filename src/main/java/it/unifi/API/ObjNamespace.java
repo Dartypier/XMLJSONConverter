@@ -1,4 +1,4 @@
-package it.unifi.main;
+package it.unifi.API;
 
 //This class defines the namespaces defined in a XML element
 //the default namespace (ie: 'xlmns:{URI}') has not 'prefix'
