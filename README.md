@@ -3,15 +3,35 @@ This tool allows a seamless conversion from XML/JSON to JSON/XML without the nee
 - conversion from XML to JSON is always doable
 - conversion from JSON to XML is doable, but JSON file must be organized in a defined structured way (readable by the tool, see below)
 
+This tool also presents an API that can be used by external Java programs to get an internal representation of XML/JSON data document in input, to allow their elaboration. It's also possible to write out the extracted elaborated data to an output document.
+
 <p align="center"><img src="demo.gif" alt="demo gif" /></p>
 
-## Usage
+## CLI Usage
+This particular use allows to convert an input XML/JSON file to the respective JSON/XML document.
+
 To convert specify the input file (`.xml`, `.railml`, `.json`) and then specify the output file.
 
 Example:
 ```bash
 java -jar XMLJSONConverter input-file.xml output-file.json
 ```
+
+## API Usage
+The tool presents a library that can be used by Java programs to extract XML/JSON data into Java objects. It is also possible to write out elaborated obects to an XML/JSON file.
+
+You can add the jar file to your Java project to use the library. The package that you should use is `it.unifi.API`. Inside you have the following classes:
+- `ObjElement`: this class defines the base type used by the library. Every ObjElement has a `name`, a `value`, an `attributesList`, a `namespacesList`, a `elementsList`. 
+
+    The structure followed is the same of an XML element as you can see. In particular `elementsList`contains the children of the actual ObjElement. 
+- `ObjAttribute`: defines a `name` and a `value` for an attribute.
+- `ObjNamespace`: defines a `prefix` (`null` if the namespace is default) and the `URI` of the namespace.
+
+All these classes defines getters and setters.
+
+`Conversion` is the actual class that allows to extract XML or JSON data from a document to a root ObjElement. The `XMLToInternal` and `JSONToInternal` methods returns an `ObjElement` that contains its attributes and namespaces, and also it contains a list of its children `ObjElements`. You can see that this structure is recursive because every `ObjElement` contains its children `ObjElements` each with their namespaces, attributes and children elements.
+
+The returned root `ObjElement` can thus be used to traverse other elements and manipulate their values. Once the manipulation is done you can also write out all the elements into an output file with `InternalToJSON` or `InternalToXML` methods that take as parameters the root `ObjElement` and the output file path.
 
 ## Supported json format
 While every well-formed XML file in input is supported, that's not the case for JSON, because JSON data structure is not as rigid as XML, so to convert from JSON to XML is necessary to follow the following format for JSON data:
