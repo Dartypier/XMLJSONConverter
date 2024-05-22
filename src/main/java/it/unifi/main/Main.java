@@ -9,6 +9,8 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws XMLStreamException, IOException, TransformerException {
+        //MAIN function for JAR execuion
+
         //Logger
 //        Logger logger = LoggerFactory.getLogger(Main.class);
 //        logger.info("SW Version: {}", "1.0");
@@ -38,6 +40,6 @@ public class Main {
 //        runnerThread.interrupt();
 
         InputManager inputManager = new InputManager(args);
-        inputManager.conversionCall();
+        inputManager.conversionCallWrite();
     }
 }
