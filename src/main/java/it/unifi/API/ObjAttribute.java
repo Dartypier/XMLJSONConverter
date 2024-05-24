@@ -10,4 +10,12 @@ public class ObjAttribute{
 
     public String getValue() {return value;}
     public void setValue(String value) {this.value = value;}
+
+    public ObjAttribute(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
+
+    //used by GSON
+    public ObjAttribute() {};
 }

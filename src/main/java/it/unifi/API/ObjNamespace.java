@@ -11,4 +11,12 @@ public class ObjNamespace {
 
     public String getURI() {return URI;}
     public void setURI(String URI) {this.URI = URI;}
+
+    public ObjNamespace(String prefix, String URI) {
+        this.prefix = prefix;
+        this.URI = URI;
+    }
+
+    //used by GSON
+    public ObjNamespace() {}
 }
