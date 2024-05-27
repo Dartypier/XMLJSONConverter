@@ -1,5 +1,6 @@
 package it.unifi.API;
 
+import com.google.gson.JsonParseException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
@@ -29,8 +30,12 @@ class ObjAttributeAdapter extends TypeAdapter<ObjAttribute> {
                 name = reader.nextName();
             }
             //treat every value as a string
-            if(token == JsonToken.STRING){
+            else if(token == JsonToken.STRING){
                 value = reader.nextString();
+            }
+            //none of the above cases (throw error)
+            else{
+                throw new JsonParseException("Not a valid JSON document: "+reader.toString());
             }
         }
         reader.endObject();

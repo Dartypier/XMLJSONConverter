@@ -1,6 +1,7 @@
 package it.unifi.API;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
@@ -97,7 +98,7 @@ class ObjElementAdapter extends TypeAdapter<ObjElement> {
                 }
             }
             //treat every value as a string
-            if(token == JsonToken.STRING){
+            else if(token == JsonToken.STRING){
                 value = reader.nextString();
             }
             else if(token == JsonToken.NUMBER){
@@ -115,6 +116,10 @@ class ObjElementAdapter extends TypeAdapter<ObjElement> {
             }
             else if(token == JsonToken.NULL){
                 reader.nextNull();
+            }
+            //throw error (none of the above cases)
+            else{
+                throw new JsonParseException("Not a valid JSON document: "+reader.toString());
             }
         }
         reader.endObject();
