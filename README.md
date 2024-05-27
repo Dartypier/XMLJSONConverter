@@ -1,4 +1,4 @@
-# XMLJSONConverter
+# XJC: XMLJSONConverter
 
 <p align="center"><img src="logo-black.png" alt="demo gif" /></p>
 
