@@ -66,7 +66,7 @@ You can see that the JSON document is divided recursively in 4 sections:
   - `"elements":[...]`. This part is the recursive part. Here will be defined the children elements of the actual element, in the way the previous section already described.[**This section is optional**]
 
 ## Benchmark
-The tools is one of the fastest in its category. The tool successfully converted 1GB XML file into a JSON file in 1.20m. With these large files you should modify Java -Xms parameter to allow an higher consumption of RAM. For this particular test 8G of RAM (Java Heap size) has been set:
+The tool is one of the fastest in its category. The tool successfully converted 1GB XML file into a JSON file in 1.20m. With these large files you should modify Java -Xms parameter to allow an higher consumption of RAM. For this particular test 8G of RAM (Java Heap size) has been set:
 
 ```bash
 java -Xmx8G -jar XMLJSONConverter input-file.xml output-file.json
