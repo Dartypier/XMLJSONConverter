@@ -1,6 +1,11 @@
 # XJC: XMLJSONConverter
 
 <p align="center"><img src="logo-black.png" alt="demo gif" /></p>
+<p align="center">
+    <a href="#" alt="static code analysis">
+        <img src="https://img.shields.io/badge/Embold%20rating-4.04/5-brightgreen" /></a>
+</p>
+<br/>
 
 This tool allows a seamless conversion from XML/JSON to JSON/XML without the need of XSD (XML Schema). 
 - conversion from XML to JSON is always doable
