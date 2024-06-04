@@ -1,0 +1,663 @@
+<?xml  version='1.0' encoding='utf-8' ?>
+<xs:schema targetNamespace="https://www.railml.org/schemas/3.2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:rail3="https://www.railml.org/schemas/3.2" elementFormDefault="qualified" version="3.2">
+	<xs:annotation>
+		<xs:documentation>Copyright (c) railML.org e.V. Dresden/Germany; All Rights Reserved.&#xD;
+&#xD;
+This work is licensed under the restricted CreativeCommons Attribution-NonCommercial-NoDerivatives 4.0 International License with additional license conditions of railML.org.&#xD;
+&#xD;
+For further information see: https://www.railml.org/licence&#xD;
+Content of this file: XML Schema for railML(R) 3.2 definition of elements for rollingstock sub schema (RS).</xs:documentation>
+	</xs:annotation>
+	<xs:include schemaLocation="common3.xsd"/>
+	<xs:include schemaLocation="generic3.xsd"/>
+	<xs:simpleType name="tVehicleOrientation">
+		<xs:annotation>
+			<xs:documentation>The orientation of the referenced vehicle within the formation. Normal means vehicle is running with its A-end ahead.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="normal"/>
+			<xs:enumeration value="reverse"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="AdministrativeData">
+		<xs:annotation>
+			<xs:documentation>Administrative data of the vehicle used mainly for asset management. This container collects the administrative data of the vehicle with naming and designators as per manufacturer, owner, operator and keeper. This element is only useful in case of an individual vehicle.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="rail3:BasicEntityRS">
+				<xs:sequence>
+					<xs:element name="manufacturer" type="rail3:VehicleManufacturerRS" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The reference to the organisationalUnit, which did produce the vehicle. The designator contains any register ID as per the manufacturer. The name is mainly a marketing name of the vehicle class from the manufacturer.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="owner" type="rail3:VehicleOwnerRS" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The reference to the organisationalUnit, which owns the vehicle. The designator contains any register ID as per the owner. This may be the national railway vehicle register. The name is any name of the vehicle was given from the owner.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="operator" type="rail3:VehicleOperatorRS" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The reference to the organisationalUnit, which uses the vehicle for operation. The designator contains any register ID as per the operator. The name is mainly a marketing name of the vehicle from the operator.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="keeper" type="rail3:VehicleKeeper" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The reference to the organisationalUnit, which is responsible for any legal issues related to the vehicle in representation of the owner. The designator contains any register ID as per the keeper. The name is mainly a marketing name of the vehicle from the keeper.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="BasicEntityRS">
+		<xs:sequence/>
+		<xs:attributeGroup ref="rail3:anyAttribute"/>
+	</xs:complexType>
+	<xs:complexType name="Brakes">
+		<xs:annotation>
+			<xs:documentation>The description and technical data of the installed brake system of the vehicle.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="rail3:BasicEntityRS">
+				<xs:sequence>
+					<xs:element name="vehicleBrakes" type="rail3:tBrakeSystem" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Description of the type of vehicle brakes and their application as brake effort or deceleration. There is a distinction between normal brake operation and emergency brake application.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="brakeEffort" type="rail3:Curve" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The description of the resulting brake effort for regular brake application as x-y-curve vs. speed of vehicle. The curve can be a valueTable or a segmentTable.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CoeffValue">
+		<xs:annotation>
+			<xs:documentation>The particular constants used as coefficient with the related exponent on the x-variable.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="coefficientValue" use="required" type="xs:decimal">
+			<xs:annotation>
+				<xs:documentation>The value of the coefficient to be used in relation to the segment start value in this interval and the related exponentValue in the &lt;polynomialHeader&gt; of the &lt;segmentTable&gt;.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ColumnHeader">
+		<xs:annotation>
+			<xs:documentation>Each element takes the header parameter (z-value) for this column in the value table.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="zValue" use="optional" type="xs:decimal">
+			<xs:annotation>
+				<xs:documentation>The value of the z-coordinate for the related column in the &lt;valueTable&gt;.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="Curve">
+		<xs:annotation>
+			<xs:documentation>The description of an arbitrary x-y-curve in the form of a valueTable or a segmentTable.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="valueTable" type="rail3:ValueTable" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The representation of an x-y-curve as a list of datasets per x-value. A third dimension z is possible.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="segmentTable" type="rail3:SegmentTable" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The representation of an x-y-curve as a list of segments described by polynomial coefficients</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Engine">
+		<xs:annotation>
+			<xs:documentation>The main data of the traction system of the vehicle. The data are only valid per powerMode, which also includes the electrificationSystem. If there is more than one engine element per vehicle the powerMode must be set.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="rail3:BasicEntityRS">
+				<xs:sequence>
+					<xs:element name="powerMode" type="rail3:TractionMode" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The power mode of this engine including the voltage and frequency of a related electrification system. In case of independent power source like diesel the electrification values shall be set to zero.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="tractiveEffort" type="rail3:Curve" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The description of the tractive effort of this engine as x-y-curve vs. speed.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="tractivePower" use="optional" type="rail3:tPowerWatt">
+					<xs:annotation>
+						<xs:documentation>The nominal value of installed tractive power in watts for this engine.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="EntityRSref">
+		<xs:complexContent>
+			<xs:extension base="rail3:tElementWithIDref">
+				<xs:sequence/>
+				<xs:attributeGroup ref="rail3:anyAttribute"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="EntityRSwithID">
+		<xs:complexContent>
+			<xs:extension base="rail3:tElementWithID">
+				<xs:sequence/>
+				<xs:attributeGroup ref="rail3:anyAttribute"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="EntityRSwithIDandDesignator">
+		<xs:complexContent>
+			<xs:extension base="rail3:tElementWithID">
+				<xs:sequence>
+					<xs:element name="designator" type="rail3:Designator" minOccurs="1" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:attributeGroup ref="rail3:anyAttribute"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Formation">
+		<xs:annotation>
+			<xs:documentation>The formation collects all data of vehicles coupled as train for operation.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="rail3:EntityRSwithIDandDesignator">
+				<xs:sequence>
+					<xs:element name="trainOrder" type="rail3:TrainOrder" minOccurs="1" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>This is the reference to the individual vehicles within the formation with their order number to mark the position in the formation. This is considering the standard orientation of the complete formation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="trainEngine" type="rail3:TrainEngine" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>These are the overall data of the traction system within the complete formation in a particular traction mode.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="trainBrakes" type="rail3:tBrakeSystem" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Description of the type of brakes within the formation and their application as brake effort or deceleration. There is a distinction between normal brake operation and emergency brake application.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="trainResistance" type="rail3:Curve" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The resistance value for the entire formation of the train. Dependent on the purpose there are different formulas used for the calculation of speed related values.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="haulingWeight" use="optional" type="rail3:tWeightTons">
+					<xs:annotation>
+						<xs:documentation>The complete weight of the formation but without locomotive in metric tons. This is not useful for multiple units.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="length" use="optional" type="rail3:tLengthM">
+					<xs:annotation>
+						<xs:documentation>The overall length of the entire formation in metres.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="maximumAxleLoad" use="optional" type="rail3:tWeightTons">
+					<xs:annotation>
+						<xs:documentation>The maximum axle load within the formation in metric tons. It is the highest value from any contained vehicle.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="maximumCantDeficiency" use="optional" type="rail3:tLengthMM">
+					<xs:annotation>
+						<xs:documentation>The resulting maximum permissible cant deficiency for this formation measured in millimetres. In order to get the cant deficiency class as per UNISIG this would require to combine it with the airBakeApplicationPosition of the trainBrakes.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="numberOfAxles" use="optional" type="xs:positiveInteger">
+					<xs:annotation>
+						<xs:documentation>The number of axles of the entire formation.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="numberOfWagons" use="optional" type="xs:positiveInteger">
+					<xs:annotation>
+						<xs:documentation>The number of non-powered wagons in the formation. This value is only useful in case of a loco hauled train.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="speed" use="optional" type="rail3:tSpeedKmPerHour">
+					<xs:annotation>
+						<xs:documentation>The maximum permissible speed in km/h of the entire formation as limited by the lowest maximum of contained vehicles.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="totalWeight" use="optional" type="rail3:tWeightTons">
+					<xs:annotation>
+						<xs:documentation>The complete weight of the formation with payload in metric tons.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Formations">
+		<xs:annotation>
+			<xs:documentation>The container for all defined formations of vehicles.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="formation" type="rail3:Formation" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The formation collects all data of vehicles coupled as train for operation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PolynomialHeader">
+		<xs:annotation>
+			<xs:documentation>The list of exponents used for calculating the polynomial.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="exponentValue" use="required" type="xs:integer">
+			<xs:annotation>
+				<xs:documentation>The value of the exponents for the related column in the &lt;segmentTable&gt; used for calculating the polynomial.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="Rollingstock">
+		<xs:annotation>
+			<xs:documentation>This is the top level element for the rollingstock model. It is for the description of physical characteristics of any rollingstock.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0" maxOccurs="1">
+			<xs:element name="vehicles" type="rail3:Vehicles" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The container for data of vehicle classes and individual vehicles</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="formations" type="rail3:Formations" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The container for all defined formations of vehicles.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SegmentStartLine">
+		<xs:annotation>
+			<xs:documentation>The line containing the values for segment start and related coefficients.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="constantValue" type="rail3:CoeffValue" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The particular constants used as coefficient with the related exponent on the x-variable.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="segmentStartValue" use="required" type="xs:decimal">
+			<xs:annotation>
+				<xs:documentation>This is the lower limit of the x-coordinate for this interval described in this line in the segmentTable.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="SegmentTable">
+		<xs:annotation>
+			<xs:documentation>The representation of an x-y-curve as a list of segments described by polynomial coefficients</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="polynomialHeader" type="rail3:PolynomialHeader" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The list of exponents used for calculating the polynomial.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="segmentStartLine" type="rail3:SegmentStartLine" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The line containing the values for segment start and related coefficients.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="functionValueName" use="required" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>This is the descriptive name for the y-coordinate resulting from the &lt;segmentTable&gt;.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="functionValueUnit" use="required" type="rail3:tUnitNameListExt">
+			<xs:annotation>
+				<xs:documentation>This is the unit used for the values of the y-coordinate resulting from the &lt;segmentTable&gt;. For scalars the value '1' shall be given.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="segmentStartValueName" use="required" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>This is the descriptive name for the x-coordinate in the &lt;segmentTable&gt;.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="segmentStartValueUnit" use="required" type="rail3:tUnitNameListExt">
+			<xs:annotation>
+				<xs:documentation>This is the unit used for the values of the x-coordinate in the &lt;segmentTable&gt;. For scalars the value '1' shall be given.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="TrainEngine">
+		<xs:annotation>
+			<xs:documentation>These are the overall data of the traction system within the complete formation in a particular traction mode.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="rail3:BasicEntityRS">
+				<xs:sequence>
+					<xs:element name="tractionMode" type="rail3:TractionMode" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The particular traction mode of the system within the complete formation, where these data are valid.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="maxAcceleration" use="optional" type="rail3:tAccelerationMeterPerSquareSec">
+					<xs:annotation>
+						<xs:documentation>The maximum acceleration in metre per square second possible with the traction system of the formation in the named traction mode.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="meanAcceleration" use="optional" type="rail3:tAccelerationMeterPerSquareSec">
+					<xs:annotation>
+						<xs:documentation>The mean acceleration in metre per square second possible with the traction system of the formation in the named traction mode.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="minTimeHoldSpeed" use="optional" type="xs:duration">
+					<xs:annotation>
+						<xs:documentation>This is the minimum time a train shall be able to maintain its speed after acceleration before it must brake otherwise no acceleration is allowed. This feature is used by some railways and only applies for punctual trains, e.g. traveling over 40 km/h. This rule gives a more energy efficient and passenger comfortable driving style.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="TrainOrder">
+		<xs:annotation>
+			<xs:documentation>This is the reference to the individual vehicles within the formation with their order number to mark the position in the formation. This is considering the standard orientation of the complete formation.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="rail3:BasicEntityRS">
+				<xs:sequence/>
+				<xs:attribute name="orderNumber" use="required" type="xs:positiveInteger">
+					<xs:annotation>
+						<xs:documentation>The order number of the vehicle within the formation starting with 1 in the front.  This is considering the standard orientation of the complete formation.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="orientation" use="optional" type="rail3:tVehicleOrientation">
+					<xs:annotation>
+						<xs:documentation>The orientation of the vehicle within the formation, whereas 'normal' means with A-end of vehicle in front. This is considering the standard orientation of the complete formation.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="vehicleRef" use="required" type="rail3:tRef">
+					<xs:annotation>
+						<xs:documentation>The reference to the vehicle used at this position in the formation.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Value">
+		<xs:annotation>
+			<xs:documentation>the y-value related to an x-value and optional z-value</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="yValue" use="required" type="xs:decimal">
+			<xs:annotation>
+				<xs:documentation>value of ordinate (y-axis) for this line (row)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ValueLine">
+		<xs:annotation>
+			<xs:documentation>The dataset of values for an x-value</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="value" type="rail3:Value" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>the y-values related to an x-value themselves</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="xValue" use="required" type="xs:decimal">
+			<xs:annotation>
+				<xs:documentation>values of abscissa (x-axis) for this line (row)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ValueTable">
+		<xs:annotation>
+			<xs:documentation>The representation of an x-y-curve as a list of datasets per x-value. A third dimension z is possible.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="columnHeader" type="rail3:ColumnHeader" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>List of values used as parameter to support meaning of values</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="valueLine" type="rail3:ValueLine" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The dataset of values for an x-value</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="xValueName" use="required" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>descriptive name for values of abscissa (x-axis)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="xValueUnit" use="required" type="rail3:tUnitNameListExt">
+			<xs:annotation>
+				<xs:documentation>physical unit for values of abscissa (x-axis)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="yValueName" use="required" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>descriptive name for values of ordinate (y-axis)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="yValueUnit" use="required" type="rail3:tUnitNameListExt">
+			<xs:annotation>
+				<xs:documentation>physical unit for values of ordinate (y-axis)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="zValueName" use="optional" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>descriptive name of z-value used as parameter in the value table</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="zValueUnit" use="optional" type="rail3:tUnitNameListExt">
+			<xs:annotation>
+				<xs:documentation>physical unit for z-value used as parameter in the value table</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="Vehicle">
+		<xs:annotation>
+			<xs:documentation>A vehicle is a set consisting of at least one vehiclePart which is used in operation as a unit and will not be split under normal circumstances during operation, i.e. splitting might be possible in the workshop only.&#xD;
+The element can be used to define the common data of a complete vehicle class or the detailed data of an individual vehicle.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="rail3:EntityRSwithIDandDesignator">
+				<xs:sequence>
+					<xs:element name="vehiclePart" type="rail3:VehiclePart" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>A physical part of the vehicle which has its own body. The parts of a vehicle are connected with some kind of coupling and/or articulation. A vehiclePart can be a segment of an articulated vehicle or a car of multiple unit.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="engine" type="rail3:Engine" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The main data of the traction system of the vehicle. The data are only valid per powerMode, which also includes the electrificationSystem. If there is more than one engine element per vehicle the powerMode must be set.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="brakes" type="rail3:Brakes" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The description and technical data of the installed brake system of the vehicle.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="administrativeData" type="rail3:AdministrativeData" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>This is the container for the administrative data of the vehicle with naming and designators as per manufacturer, owner, operator and keeper. This element is only useful in case of an individual vehicle.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="adhesionWeight" use="optional" type="rail3:tWeightTons">
+					<xs:annotation>
+						<xs:documentation>The weight of the entire vehicle in metric tons usable for traction.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="belongsToParent" use="optional" type="rail3:tRef">
+					<xs:annotation>
+						<xs:documentation>In case of describing an individual vehicle this is the reference to the common data of the vehicle class, which is also a &lt;vehicle&gt; element. The data of an individual vehicle shall supplement or override the common data of the vehicle class.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="bruttoWeight" use="optional" type="rail3:tWeightTons">
+					<xs:annotation>
+						<xs:documentation>The total weight of the entire vehicle in metric tons.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="length" use="optional" type="rail3:tLengthM">
+					<xs:annotation>
+						<xs:documentation>The overall length of the vehicle in metres.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="maximumAxleLoad" use="optional" type="rail3:tWeightTons">
+					<xs:annotation>
+						<xs:documentation>The maximum axle load in metric tons for any axle of the vehicle.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="nettoWeight" use="optional" type="rail3:tWeightTons">
+					<xs:annotation>
+						<xs:documentation>The payload of the entire vehicle in metric tons.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="numberOfAxles" use="optional" type="xs:positiveInteger">
+					<xs:annotation>
+						<xs:documentation>The total number of axles of this vehicle.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="speed" use="optional" type="rail3:tSpeedKmPerHour">
+					<xs:annotation>
+						<xs:documentation>The maximum permissible speed for the vehicle in km/h.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="tareWeight" use="optional" type="rail3:tWeightTons">
+					<xs:annotation>
+						<xs:documentation>The tare weight of the entire vehicle in metric tons.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="VehicleAdministration" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Template of administrative data of the vehicle used mainly for asset management. It provides possible administrative data of the vehicle with naming and designators as per manufacturer, owner, operator and keeper.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="designator" type="rail3:Designator" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Any registered designator as used by the organizational unit.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="name" type="rail3:Name" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The marketing name as used by the organizational unit.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="class" use="optional" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>The class name as used by the organizational unit.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="refersTo" use="required" type="rail3:tRef">
+			<xs:annotation>
+				<xs:documentation>The reference to the organizational unit.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="VehicleKeeper">
+		<xs:annotation>
+			<xs:documentation>The reference to the organisationalUnit, which is responsible for any legal issues related to the vehicle in representation of the owner. The designator contains any register ID as per the keeper. The name is mainly a marketing name of the vehicle from the keeper.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="rail3:VehicleAdministration">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="VehicleManufacturerRS">
+		<xs:annotation>
+			<xs:documentation>The reference to the organisationalUnit, which did produce the vehicle. The designator contains any register ID as per the manufacturer. The name is mainly a marketing name of the vehicle class from the manufacturer.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="rail3:VehicleAdministration">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="VehicleOperatorRS">
+		<xs:annotation>
+			<xs:documentation>The reference to the organisationalUnit, which uses the vehicle for operation. The designator contains any register ID as per the operator. The name is mainly a marketing name of the vehicle from the operator.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="rail3:VehicleAdministration">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="VehicleOwnerRS">
+		<xs:annotation>
+			<xs:documentation>The reference to the organisationalUnit, which owns the vehicle. The designator contains any register ID as per the owner. This may be the national railway vehicle register. The name is any name of the vehicle was given from the owner.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="rail3:VehicleAdministration">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="VehiclePart">
+		<xs:annotation>
+			<xs:documentation>A physical part of the vehicle which has its own body. The parts of a vehicle are connected with some kind of coupling and/or articulation. A vehiclePart can be a segment of an articulated vehicle or a car of multiple unit.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="rail3:EntityRSwithIDandDesignator">
+				<xs:sequence>
+					<xs:element name="passengerFacilities" type="rail3:PassengerFacilities" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Container for facilities available for passengers.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="freightFacilities" type="rail3:FreightFacilities" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Container for facilities available for freight transport.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="airTightness" use="optional" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation>The flag, whether this part provides air tightness for the passengers.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="emergencyBrakeOverride" use="optional" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation>The flag, whether this part provides a mean of override the emergency brake trigger.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="maximumCantDeficiency" use="optional" type="rail3:tLengthMM">
+					<xs:annotation>
+						<xs:documentation>The maximum value of permissible cant deficiency for this vehicle part measured in millimetres.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="partOrder" use="required" type="xs:positiveInteger">
+					<xs:annotation>
+						<xs:documentation>The order number of the vehicle part within the entire vehicle starting with 1 from A-end (front) of the vehicle.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Vehicles">
+		<xs:annotation>
+			<xs:documentation>The container for data of vehicle classes and individual vehicles</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="vehicle" type="rail3:Vehicle" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A vehicle is a set consisting of at least one vehiclePart which is used in operation as a unit and will not be split under normal circumstances during operation, i.e. splitting might be possible in the workshop only.&#xD;
+The element can be used to define the common data of a complete vehicle class or the detailed data of an individual vehicle.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

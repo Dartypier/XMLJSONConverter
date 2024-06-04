@@ -1,0 +1,646 @@
+<?xml  version='1.0' encoding='utf-8' ?>
+<xs:schema targetNamespace="https://www.railml.org/schemas/3.2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:rail3="https://www.railml.org/schemas/3.2" xmlns:dc="http://purl.org/dc/elements/1.1/" elementFormDefault="qualified" version="3.2">
+	<xs:annotation>
+		<xs:documentation>Copyright (c) railML.org e.V. Dresden/Germany; All Rights Reserved.&#xD;
+&#xD;
+This work is licensed under the restricted CreativeCommons Attribution-NonCommercial-NoDerivatives 4.0 International License with additional license conditions of railML.org.&#xD;
+&#xD;
+For further information see: https://www.railml.org/licence&#xD;
+Content of this file: XML Schema for railML(R) 3.2 definition of elements for common sub schema (CO).</xs:documentation>
+	</xs:annotation>
+	<xs:import namespace="http://purl.org/dc/elements/1.1/" schemaLocation="https://dublincore.org/schemas/xmls/qdc/2008/02/11/dc.xsd"/>
+	<xs:include schemaLocation="generic3.xsd"/>
+	<xs:include schemaLocation="rtm4railml3.xsd"/>
+	<xs:simpleType name="tSpeedProfileInfluence">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="decreasing"/>
+			<xs:enumeration value="increasing"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="tTractionModeList">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="battery"/>
+			<xs:enumeration value="diesel"/>
+			<xs:enumeration value="electricOverheadLine"/>
+			<xs:enumeration value="electricThirdRail"/>
+			<xs:enumeration value="hydrogenFuelCell"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="tTractionModeListExt">
+		<xs:union memberTypes="rail3:tTractionModeList rail3:tOtherEnumerationValue"/>
+	</xs:simpleType>
+	<xs:simpleType name="tTrainType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="all">
+				<xs:annotation>
+					<xs:documentation>use value 'all' to specify that the speed profile is valid for all types of train</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="freight">
+				<xs:annotation>
+					<xs:documentation>used to specify that the speed profile is valid for freight trains</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mixed">
+				<xs:annotation>
+					<xs:documentation>a mixed train includes passenger and freight waggons</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="passenger">
+				<xs:annotation>
+					<xs:documentation>used to specify that the speed profile is valid for passenger trains</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="tiltingPassenger">
+				<xs:annotation>
+					<xs:documentation>DEPRECATED; use tilting element instead</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="tTrainTypeExt">
+		<xs:union memberTypes="rail3:tTrainType rail3:tOtherEnumerationValue"/>
+	</xs:simpleType>
+	<xs:complexType name="Alternative">
+		<xs:complexContent>
+			<xs:extension base="rail3:tElementWithIDandName">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Common">
+		<xs:annotation>
+			<xs:documentation>This is the top level element for the common model.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="rail3:tElementWithID">
+				<xs:sequence>
+					<xs:element name="electrificationSystems" type="rail3:ElectrificationSystems" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>container element for all electrificationSystem elements</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="organizationalUnits" type="rail3:OrganizationalUnits" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>container element for all organizationalUnit elements</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="speedProfiles" type="rail3:SpeedProfiles" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>container element for all speedProfile elements</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="positioning" type="rail3:PositioningSystems" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="timePeriods" type="rail3:TimePeriods" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>container element for all timePeriod elements</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="projects" type="rail3:Projects" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Concessionaire">
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:complexType name="Contractor">
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:complexType name="Customer">
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:complexType name="DoneBy">
+		<xs:complexContent>
+			<xs:extension base="rail3:tElementWithIDandName">
+				<xs:sequence/>
+				<xs:attribute name="date" use="optional" type="xs:date">
+					<xs:annotation>
+						<xs:documentation>The date of a revision</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ElectrificationSystem">
+		<xs:annotation>
+			<xs:documentation>electric power for the propulsion of rail transport [wikipedia].</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="rail3:tElementWithID">
+				<xs:sequence/>
+				<xs:attribute name="frequency" use="optional" type="rail3:tFrequencyHertz">
+					<xs:annotation>
+						<xs:documentation>electrification system frequency, in [Hz]; for DC the frequency shall be set to zero</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="voltage" use="optional" type="rail3:tVoltageVolt">
+					<xs:annotation>
+						<xs:documentation>electrification system voltage, in [V]</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ElectrificationSystems">
+		<xs:sequence>
+			<xs:element name="electrificationSystem" type="rail3:ElectrificationSystem" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Used to define the electrification systems used in the railML document. An electrification system provides electric power for the propulsion of rail transport [wikipedia].</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GeometricPositioningSystems">
+		<xs:sequence>
+			<xs:element name="geometricPositioningSystem" type="rail3:RTM_GeometricPositioningSystem" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Holiday">
+		<xs:sequence>
+			<xs:element name="name" type="rail3:Name" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="holidayDate" use="required" type="xs:date">
+			<xs:annotation>
+				<xs:documentation>The date of the holiday. </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="Holidays">
+		<xs:sequence>
+			<xs:element name="holiday" type="rail3:Holiday" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Describes a single holiday along with a name. &#xD;
+Using the attribute publicHoldayMode (available at the operatingDayValidity, the weekdayPeriod as well as the weekPattern) it can be described if trains run on this holiday or not.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InfrastructureManager">
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:complexType name="LinearPositioningSystems">
+		<xs:sequence>
+			<xs:element name="linearPositioningSystem" type="rail3:RTM_LinearPositioningSystem" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Metadata">
+		<xs:annotation>
+			<xs:documentation>This is the top level element for file metadata information.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="dc:elementContainer">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ObjectsRevised">
+		<xs:sequence>
+			<xs:element name="objectRevised" type="rail3:tElementWithIDref" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Reference to an object that was changed in this revision.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OperationalUndertaking">
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:complexType name="OrganizationalUnit">
+		<xs:complexContent>
+			<xs:extension base="rail3:tElementWithIDandName">
+				<xs:sequence>
+					<xs:element name="isInfrastructureManager" type="rail3:InfrastructureManager" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The infrastructure manager owns and operates the railway network and related infrastructure.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="isVehicleManufacturer" type="rail3:VehicleManufacturer" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The vehicle manufacturer produces the railway vehicles.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="isVehicleOperator" type="rail3:VehicleOperator" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Some kind of subcontractor (railway undertaking) that operates the vehicle, if different from the one that is responsible for the commercial service.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="isCustomer" type="rail3:Customer" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The authority or enterprise that ordered the transportation service</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="isRailwayUndertaking" type="rail3:RailwayUndertaking" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The undertaking that is commercially responsible for the service</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="isOperationalUndertaking" type="rail3:OperationalUndertaking" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The unit that is responsible for the operational planning of this service.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="isConcessionaire" type="rail3:Concessionaire" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="isContractor" type="rail3:Contractor" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Any unit or undertaking that has a binding not defined in a neighbouring element.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="isVehicleOwner" type="rail3:VehicleOwner" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The owner of the railway vehicles.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="code" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>insert here the matching code from the relevant codelist</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="OrganizationalUnits">
+		<xs:annotation>
+			<xs:documentation>This is the top level element for various company definitions regarding the railway services referred to in this file</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="infrastructureManager" type="rail3:OrganizationalUnit" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>DEPRECATED with railML 3.2; use organizationalUnit instead;&#xD;
+The infrastructure manager owns and operates the railway network and related infrastructure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="vehicleManufacturer" type="rail3:OrganizationalUnit" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>DEPRECATED with railML 3.2; use organizationalUnit instead;&#xD;
+The vehicle manufacturer produces the railway vehicles.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="vehicleOperator" type="rail3:OrganizationalUnit" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>DEPRECATED with railML 3.2; use organizationalUnit instead;&#xD;
+Some kind of subcontractor (railway undertaking) that operates the vehicle, if different from the one that is responsible for the commercial service</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="customer" type="rail3:OrganizationalUnit" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>DEPRECATED with railML 3.2; use organizationalUnit instead;&#xD;
+The authority or enterprise that ordered the transportation service</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="railwayUndertaking" type="rail3:OrganizationalUnit" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>DEPRECATED with railML 3.2; use organizationalUnit instead;&#xD;
+The undertaking that is commercially responsible for the service</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="operationalUndertaking" type="rail3:OrganizationalUnit" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>DEPRECATED with railML 3.2; use organizationalUnit instead;&#xD;
+The unit that is responsible for the operational planning of this service</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="concessionaire" type="rail3:OrganizationalUnit" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>DEPRECATED with railML 3.2; use organizationalUnit instead;</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="contractor" type="rail3:OrganizationalUnit" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>DEPRECATED with railML 3.2; use organizationalUnit instead;&#xD;
+Any unit or undertaking that has a binding not defined in a neighbouring element</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="organizationalUnit" type="rail3:OrganizationalUnit" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Specify the type of organizational unit using its child elements.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Phase">
+		<xs:complexContent>
+			<xs:extension base="rail3:tElementWithIDandName">
+				<xs:sequence/>
+				<xs:attribute name="endDate" use="optional" type="xs:date">
+					<xs:annotation>
+						<xs:documentation>The end date for this phase.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="startDate" use="optional" type="xs:date">
+					<xs:annotation>
+						<xs:documentation>The start date for this phase.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PositioningSystems">
+		<xs:annotation>
+			<xs:documentation>This is the top level element for railML3 positioning and coordinate systems model.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="geometricPositioningSystems" type="rail3:GeometricPositioningSystems" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>container element for all geometric positioning systems</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="linearPositioningSystems" type="rail3:LinearPositioningSystems" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>container element for all linear positioning systems</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="screenPositioningSystems" type="rail3:ScreenPositioningSystems" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>container element for all screen coordinate systems</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Project">
+		<xs:complexContent>
+			<xs:extension base="rail3:tElementWithIDandName">
+				<xs:sequence>
+					<xs:element name="designator" type="rail3:Designator" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>External identifier of the project.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="projectArea" type="rail3:tElementWithIDref" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Reference to a project area.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="alternative" type="rail3:Alternative" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>If a project has multiple alternative solutions, this elements is used to specify which alternative is presented in this railML file.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="phase" type="rail3:Phase" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Describes which phase of the project this file represents.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="revision" type="rail3:Revision" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Describes changes from a previous revision and the authors and auditors of these changes.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Projects">
+		<xs:sequence>
+			<xs:element name="project" type="rail3:Project" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Describes one or more projects this railML model belongs to.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RailwayUndertaking">
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:complexType name="Revision">
+		<xs:complexContent>
+			<xs:extension base="rail3:tElementWithIDandName">
+				<xs:sequence>
+					<xs:element name="approvedBy" type="rail3:DoneBy" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The person(s) who approved this revision</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="revisedBy" type="rail3:DoneBy" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The author(s) of this revision</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="checkedBy" type="rail3:DoneBy" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The peer-reviewer(s) of this revision</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="objectsRevised" type="rail3:ObjectsRevised" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Container for references to objects changed in this revision.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="initialProjectRef" use="optional" type="rail3:tGenericRef">
+					<xs:annotation>
+						<xs:documentation>Reference to a project element describing the previous revision. This may be the same project with another alternative or revision, or another project that was the base for this one.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ScreenPositioningSystem">
+		<xs:annotation>
+			<xs:documentation>reference system that allows to locate a resource on a screen.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="rail3:RTM_PositioningSystem">
+				<xs:sequence/>
+				<xs:attribute name="pxX" use="required" type="xs:positiveInteger">
+					<xs:annotation>
+						<xs:documentation>pixel X, max value of x axis of a screen.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="pxY" use="required" type="xs:positiveInteger">
+					<xs:annotation>
+						<xs:documentation>pixel Y, max value of y axis of a screen.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="pxZ" use="optional" type="xs:positiveInteger">
+					<xs:annotation>
+						<xs:documentation>pixel Z, max value of z axis of a screen.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ScreenPositioningSystems">
+		<xs:sequence>
+			<xs:element name="screenPositioningSystem" type="rail3:ScreenPositioningSystem" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SpeedProfile">
+		<xs:complexContent>
+			<xs:extension base="rail3:tElementWithIDandName">
+				<xs:sequence>
+					<xs:element name="tilting" type="rail3:SpeedProfileTilting" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="load" type="rail3:SpeedProfileLoad" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="braking" type="rail3:SpeedProfileBraking" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="trainType" type="rail3:SpeedProfileTrainType" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>a speedProfile can be linked with several train types</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="isBasicSpeedProfile" use="optional" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation>boolean flag to identify basic speed profiles;&#xD;
+if NO, then further information need to be defined, e.g. trainType, braking or maxCantDeficiency</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="mVersion" use="optional" type="xs:nonNegativeInteger">
+					<xs:annotation>
+						<xs:documentation>corresponds to ETCS variable M_VERSION</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attributeGroup ref="rail3:aSpeedProfile"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SpeedProfileBraking">
+		<xs:sequence/>
+		<xs:attribute name="airBrakeApplicationPosition" use="optional" type="rail3:tAirBrakeApplicationDirection">
+			<xs:annotation>
+				<xs:documentation>base brake switch: one of G, P or R</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="brakeType" use="optional" type="rail3:tBrakeTypeExt">
+			<xs:annotation>
+				<xs:documentation>vacuum or compressed air brake, hand brake, parking brake, cable brake</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="minBrakePercentage" use="optional" type="rail3:tBrakePercentage">
+			<xs:annotation>
+				<xs:documentation>minimum brake percentage of the train</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="SpeedProfileEtcs">
+		<xs:sequence/>
+		<xs:attribute name="etcsTrainCategoryNumber" use="required" type="rail3:tEtcsTrainCategoryNumber">
+			<xs:annotation>
+				<xs:documentation>this information shall be derived from trainType, airBrakeApplicationPosition and maxCantDeficiency. Shall not be used as leading information, but rather as derived additional description.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="SpeedProfileLoad">
+		<xs:sequence/>
+		<xs:attribute name="exceedsAxleLoad" use="optional" type="rail3:tWeightTons">
+			<xs:annotation>
+				<xs:documentation>The enclosing speed profile applies for trains exceeding the axle load specified here.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="exceedsMeterLoad" use="optional" type="rail3:tMeterloadTonsPerMeter">
+			<xs:annotation>
+				<xs:documentation>The enclosing speed profile applies for trains exceeding the meter load specified here.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="maxAxleLoad" use="optional" type="rail3:tWeightTons">
+			<xs:annotation>
+				<xs:documentation>DEPRECATED: please use exceedsAxleLoad instead. This attribute will be removed with version 3.3</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="maxMeterLoad" use="optional" type="rail3:tMeterloadTonsPerMeter">
+			<xs:annotation>
+				<xs:documentation>DEPRECATED: please use exceedsMeterLoad instead. This attribute will be removed with version 3.3</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="SpeedProfiles">
+		<xs:sequence>
+			<xs:element name="speedProfile" type="rail3:SpeedProfile" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SpeedProfileTilting">
+		<xs:sequence/>
+		<xs:attribute name="actuation" use="optional" type="rail3:tTiltingActuationType"/>
+		<xs:attribute name="maxTiltingAngle" use="optional" type="rail3:tAngleDegQuadrant"/>
+	</xs:complexType>
+	<xs:complexType name="SpeedProfileTrainType">
+		<xs:sequence>
+			<xs:element name="etcsSpeedProfile" type="rail3:SpeedProfileEtcs" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="cantDeficiency" use="optional" type="rail3:tCantDeficiency">
+			<xs:annotation>
+				<xs:documentation>DEPRECATED; use new speedProfile attribute maxCantDeficiency instead</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="etcsTrainCategoryNumber" use="optional" type="rail3:tEtcsTrainCategoryNumber">
+			<xs:annotation>
+				<xs:documentation>DEPRECATED, use child element etcsSpeedProfile instead;&#xD;
+this information shall be derived from trainType, airBrakeApplicationPosition and maxCantDeficiency</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="type" use="optional" type="rail3:tTrainTypeExt">
+			<xs:annotation>
+				<xs:documentation>the operational type of train, e.g. passenger or freight</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="TimePeriod">
+		<xs:complexContent>
+			<xs:extension base="rail3:tElementWithID">
+				<xs:sequence>
+					<xs:element name="holidays" type="rail3:Holidays" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>container for specification of holidays that apply for the enclosing time period</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="from" use="required" type="xs:date">
+					<xs:annotation>
+						<xs:documentation>specifies the start date of the time period</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="to" use="required" type="xs:date">
+					<xs:annotation>
+						<xs:documentation>specifies the end date of the time period</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="TimePeriods">
+		<xs:sequence>
+			<xs:element name="timePeriod" type="rail3:TimePeriod" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Using a timeperiod it is possible to specify for which amount of time the schedule and infrastructure data enclosed in the railML is valid.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TractionMode">
+		<xs:annotation>
+			<xs:documentation>The particular traction mode of the system within the complete train, where these data are valid.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="rail3:ElectrificationSystem">
+				<xs:sequence/>
+				<xs:attribute name="isPrimaryMode" use="optional" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation>Flag, whether this is the primary mode of traction of the train</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="mode" use="optional" type="rail3:tTractionModeListExt">
+					<xs:annotation>
+						<xs:documentation>Mode of traction related to the ElectrificationSystem</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="VehicleManufacturer">
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:complexType name="VehicleOperator">
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:complexType name="VehicleOwner">
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:attributeGroup name="aSpeedProfile">
+		<xs:attribute name="influence" use="optional" type="rail3:tSpeedProfileInfluence"/>
+		<xs:attribute name="maxCantDeficiency" use="optional" type="rail3:tCantDeficiency">
+			<xs:annotation>
+				<xs:documentation>the maximum cant deficiency provided in mm (80..300)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:attributeGroup>
+</xs:schema>
