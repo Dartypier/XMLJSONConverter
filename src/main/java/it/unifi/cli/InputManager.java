@@ -37,7 +37,7 @@ class InputManager {
         if(inputFile.toLowerCase().contains(".xml") || inputFile.toLowerCase().contains(".railml")) {
             ConversionWrite.writeXMLToJSON(inputFile, outputFile);
         }
-        else if(inputFile.toLowerCase().contains("json")) {
+        else if(inputFile.toLowerCase().contains(".json")) {
             ConversionWrite.writeJSONToXML(inputFile, outputFile);
         }
         else{
