@@ -1,4 +1,12 @@
-# XMLJSONConverter
+# XJC: XMLJSONConverter
+
+<p align="center"><img src="logo-black.png" alt="demo gif" /></p>
+<p align="center">
+    <a href="#" alt="static code analysis">
+        <img src="https://img.shields.io/badge/Embold%20rating-4.04/5-brightgreen" /></a>
+</p>
+<br/>
+
 This tool allows a seamless conversion from XML/JSON to JSON/XML without the need of XSD (XML Schema). 
 - conversion from XML to JSON is always doable
 - conversion from JSON to XML is doable, but JSON file must be organized in a defined structured way (readable by the tool, see below)
@@ -61,6 +69,13 @@ You can see that the JSON document is divided recursively in 4 sections:
     - as said, every element in this list is an object that represent a namespace, with `"prefix":"URI"`. If you want to define the XML _default namespace_ (ie `xmlns`), you must set `"":"URI"`, so that `prefix` is an empty string. [**This section is optional**]
   - `"attributes":[...]`. This part will define a list of attributes for the element in this scope. Every attribute here is represented as an object (i.e. in curly braces). [**This section is optional**]
   - `"elements":[...]`. This part is the recursive part. Here will be defined the children elements of the actual element, in the way the previous section already described.[**This section is optional**]
+
+## Benchmark
+The tool is one of the fastest in its category. The tool successfully converted 1GB XML file into a JSON file in 1.20m. With these large files you should modify Java -Xms parameter to allow an higher consumption of RAM. For this particular test 8G of RAM (Java Heap size) has been set:
+
+```bash
+java -Xmx8G -jar XMLJSONConverter input-file.xml output-file.json
+```
 
 
 ## Limitations
