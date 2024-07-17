@@ -34,7 +34,7 @@ class InputManager {
 
     //does conversion call based on user input writing to an output file
     public void conversionCallWrite() throws XMLStreamException, IOException, TransformerException {
-        if(inputFile.toLowerCase().contains("xml") || inputFile.toLowerCase().contains("railml")) {
+        if(inputFile.toLowerCase().contains(".xml") || inputFile.toLowerCase().contains(".railml")) {
             ConversionWrite.writeXMLToJSON(inputFile, outputFile);
         }
         else if(inputFile.toLowerCase().contains("json")) {
