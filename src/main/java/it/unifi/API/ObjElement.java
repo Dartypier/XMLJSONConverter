@@ -12,6 +12,10 @@ public class ObjElement {
     private String name;
     //element value
     private String value;
+    //parent element for actual ObjElement (null for root XML element)
+    //this is used by the reade XML and JSON methods to have a parent object as a back pointer
+    //when using the API for adding ObjElement is not necessary but eventually useful for backtracking
+    private ObjElement parent;
     //List that contains attributes for element object
     private List<ObjAttribute> attributesList;
     //List that contains namespaces for element Object
@@ -23,6 +27,7 @@ public class ObjElement {
         //all fields initialized by default
         this.name=null;
         this.value=null;
+        this.parent =null;
         this.attributesList=new ArrayList<>();
         this.elementsList=new ArrayList<>();
         this.namespacesList=new ArrayList<>();
@@ -33,6 +38,12 @@ public class ObjElement {
         this.namespacesList=namespacesList;
         this.attributesList=attributesList;
         this.elementsList=elementsList;
+        //parent is by default null
+        this.parent=null;
+        //now taking care of assigning the actual ObjElement as parent for all elementList ObjElements
+        for(ObjElement e:this.elementsList){
+            e.setParent(this);
+        }
     }
 
     public String getName() {return name;}
@@ -40,6 +51,9 @@ public class ObjElement {
 
     public String getValue() {return value;}
     public void setValue(String value) {this.value = value;}
+
+    public ObjElement getParent() {return parent;}
+    public void setParent(ObjElement parent) {this.parent = parent;}
 
     public List<ObjAttribute> getAttributesList() {return attributesList;}
     public List<ObjElement> getElementsList() {return elementsList;}

@@ -67,7 +67,7 @@ public class Conversion {
         XMLEventReader reader = xmlInputFactory.createXMLEventReader(new FileInputStream(inPath));
 
         //mantains a reference to the root element, because its mantains
-        //all other objects references
+        //all other objects references: is the returned entry point ObjElement
         ObjElement rootElement = null;
 
         while (reader.hasNext()) {
@@ -93,9 +93,16 @@ public class Conversion {
                 recursiveObjBlocks.add(new ArrayList<>());
                 //adding new it.unifi.main.ObjElement to its arrayLIst and the precedent
                 recursiveObjBlocks.get(recursiveObjBlocks.size()-1).add(e);
-                //check if -2 range exist (for root element it doesn't exist)
-                if(recursiveObjBlocks.size()>=2)
-                    recursiveObjBlocks.get(recursiveObjBlocks.size()-2).add(e);
+                //check if -2 range exist (for root element it doesn't exist) and adding parent (root) ObjElement
+                if(recursiveObjBlocks.size()>=2) {
+                    recursiveObjBlocks.get(recursiveObjBlocks.size() - 2).add(e);
+                    //parent element for actual e ObjElement is the first one in the precedent ArrayList
+                    e.setParent(recursiveObjBlocks.get(recursiveObjBlocks.size() - 2).get(0));
+                }
+                else{
+                    //no parent element for XML Root document element
+                    e.setParent(null);
+                }
             }
             if(nextEvent.isCharacters()){
                 String str = nextEvent.asCharacters().getData().trim();
