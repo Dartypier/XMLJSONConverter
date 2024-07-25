@@ -13,7 +13,7 @@ public class ObjElement {
     //element value
     private String value;
     //parent element for actual ObjElement (null for root XML element)
-    //this is used by the reade XML and JSON methods to have a parent object as a back pointer
+    //this is used by the reader XML and JSON methods to have a parent object as a back pointer
     //when using the API for adding ObjElement is not necessary but eventually useful for backtracking
     private ObjElement parent;
     //List that contains attributes for element object
@@ -32,14 +32,13 @@ public class ObjElement {
         this.elementsList=new ArrayList<>();
         this.namespacesList=new ArrayList<>();
     }
-    public ObjElement(String name, String value, List namespacesList, List attributesList, List elementsList){
+    public ObjElement(String name, String value, ObjElement parent, List namespacesList, List attributesList, List elementsList){
         this.name=name;
         this.value=value;
+        this.parent = parent;
         this.namespacesList=namespacesList;
         this.attributesList=attributesList;
         this.elementsList=elementsList;
-        //parent is by default null
-        this.parent=null;
         //now taking care of assigning the actual ObjElement as parent for all elementList ObjElements
         for(ObjElement e:this.elementsList){
             e.setParent(this);

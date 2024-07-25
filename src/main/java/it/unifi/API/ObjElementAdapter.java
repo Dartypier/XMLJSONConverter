@@ -126,6 +126,6 @@ class ObjElementAdapter extends TypeAdapter<ObjElement> {
 
         //note that the parameterized constructor takes care of assigning the parent for all
         //the ObjElement of elementsList
-        return new ObjElement(name, value, namespacesList, attributesList, elementsList);
+        return new ObjElement(name, value, null, namespacesList, attributesList, elementsList);
     }
 }
