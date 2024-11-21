@@ -114,6 +114,9 @@ public class Conversion {
                     //this is done because in large strings not all is read at once by stax
                     String existingValue = recursiveObjBlocks.get(recursiveObjBlocks.size() - 1).get(0).getValue();
                     if (existingValue == null) {
+                        //if here String read is the first one of the current element
+                        //removing leading white characters (not removed by STAX)
+                        str = str.replaceAll("^\\s+", "");
                         existingValue = ""; // Initialize if null
                     }
                     recursiveObjBlocks.get(recursiveObjBlocks.size() - 1).get(0).setValue(existingValue + str);
