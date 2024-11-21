@@ -193,8 +193,9 @@ public class Conversion {
             Transformer t = TransformerFactory.newInstance().newTransformer();
             //add indentations
             t.setOutputProperty(OutputKeys.INDENT, "yes");
+            t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
             //add line break before the root element
-            t.setOutputProperty(OutputKeys.STANDALONE, "yes");
+            t.setOutputProperty(OutputKeys.STANDALONE, "no");
             Writer fw = new FileWriter(outPath);
             StreamSource ss = new StreamSource(new StringReader(sw.toString()));
             StreamResult sr = new StreamResult(fw);
