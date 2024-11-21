@@ -105,13 +105,18 @@ public class Conversion {
                 }
             }
             if(nextEvent.isCharacters()){
-                String str = nextEvent.asCharacters().getData().trim();
+                String str = nextEvent.asCharacters().getData();
                 //if the value is WhiteSpace, it is ignored
                 if(!(nextEvent.asCharacters().isIgnorableWhiteSpace() || nextEvent.asCharacters().isWhiteSpace())){
                     //add string value to the current object
-                    //first element in last arrayList of reursiveObjBlocks
-                    recursiveObjBlocks.get(recursiveObjBlocks.size()-1).get(0).setValue(str);
-
+                    //first element in last arrayList of recursiveObjBlocks
+                    // Append the string value to the current object's existing value
+                    //this is done because in large strings not all is read at once by stax
+                    String existingValue = recursiveObjBlocks.get(recursiveObjBlocks.size() - 1).get(0).getValue();
+                    if (existingValue == null) {
+                        existingValue = ""; // Initialize if null
+                    }
+                    recursiveObjBlocks.get(recursiveObjBlocks.size() - 1).get(0).setValue(existingValue + str);
                 }
             }
             if(nextEvent.isEndElement()){
